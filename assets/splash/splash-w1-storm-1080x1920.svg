@@ -1,0 +1,35 @@
+<svg width="1080" height="1920" viewBox="0 0 390 844" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="844" fill="#100e0c"/>
+  <rect width="390" height="422" fill="#1a1410" opacity="0.8"/>
+  <ellipse cx="78" cy="140" rx="107" ry="70" fill="#1e1a16" opacity="0.9"/>
+  <ellipse cx="234" cy="94" rx="137" ry="88" fill="#221e18" opacity="0.9"/>
+  <ellipse cx="332" cy="188" rx="88" ry="58" fill="#1a1610" opacity="0.8"/>
+  <ellipse cx="156" cy="211" rx="117" ry="65" fill="#1c1814" opacity="0.7"/>
+  <!-- Lightning -->
+  <path d="M215 70 L199 164 L211 164 L192 258" stroke="#c9a96e" stroke-width="2.4" fill="none" opacity="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M215 70 L199 164 L211 164 L192 258" stroke="#e8d090" stroke-width="0.8" fill="none" opacity="0.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Sea -->
+  <path d="M0 470 C39 445 78 492 117 470 C156 445 195 492 234 470 C273 445 312 492 351 470 C371 458 382 465 390 470 L390 844 L0 844 Z" fill="#1a1410"/>
+  <path d="M0 470 C39 445 78 492 117 470 C156 445 195 492 234 470 C273 445 312 492 351 470 C371 458 382 465 390 470" stroke="#c9a96e" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M0 516 C59 497 117 535 176 516 C234 497 293 535 390 516" stroke="#c9a96e" stroke-width="1.2" fill="none" opacity="0.25"/>
+  <path d="M0 563 C49 547 107 578 166 563 C225 547 303 578 390 563" stroke="#c9a96e" stroke-width="1.2" fill="none" opacity="0.2"/>
+  <path d="M0 610 C68 595 127 625 195 610 C264 595 322 625 390 610" stroke="#c9a96e" stroke-width="1" fill="none" opacity="0.15"/>
+  <!-- Serpents -->
+  <path d="M59 657 C97 610 156 633 176 680 C195 727 156 774 117 750 C78 727 97 680 137 675" stroke="#c9a96e" stroke-width="3.5" fill="none" opacity="0.6" stroke-linecap="round"/>
+  <path d="M254 633 C293 586 342 618 348 672 C354 715 322 745 290 727 C258 708 270 665 302 660" stroke="#c9a96e" stroke-width="3.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <!-- Moon -->
+  <circle cx="303" cy="129" r="42" fill="#1c1810"/>
+  <circle cx="303" cy="129" r="35" fill="#2a2318" opacity="0.9"/>
+  <circle cx="310" cy="122" r="32" fill="#100e0c"/>
+  <!-- Stars -->
+  <circle cx="59" cy="59" r="1.6" fill="#c9a96e" opacity="0.6"/>
+  <circle cx="107" cy="35" r="1.2" fill="#c9a96e" opacity="0.5"/>
+  <circle cx="146" cy="70" r="1.4" fill="#c9a96e" opacity="0.4"/>
+  <circle cx="332" cy="47" r="1.8" fill="#c9a96e" opacity="0.6"/>
+  <circle cx="361" cy="82" r="1.2" fill="#c9a96e" opacity="0.4"/>
+  <circle cx="39" cy="117" r="1" fill="#c9a96e" opacity="0.3"/>
+  <circle cx="176" cy="23" r="1.4" fill="#c9a96e" opacity="0.45"/>
+  <circle cx="254" cy="47" r="1" fill="#c9a96e" opacity="0.35"/>
+  <!-- App name area hint — bottom safe zone -->
+  <rect x="0" y="750" width="390" height="94" fill="#100e0c" opacity="0.7"/>
+</svg>
