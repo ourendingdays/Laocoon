@@ -1,5 +1,0 @@
-<svg width="24" height="24" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="none">
-  <title>Laocoon — action-delete</title>
-  <desc>Laocoon app icon: action-delete, 24x24px</desc>
-  <polyline points="8,9 16,5 24,9 24,23 16,27 8,23 Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><line x1="16" y1="5" x2="16" y2="27" stroke="currentColor" stroke-width="0.75" stroke-dasharray="2,2"/><line x1="8" y1="9" x2="24" y2="9" stroke="currentColor" stroke-width="0.75" stroke-dasharray="2,2"/>
-</svg>
