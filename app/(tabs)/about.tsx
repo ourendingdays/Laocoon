@@ -1,21 +1,24 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { ImageBackground, Platform } from 'react-native';
+import { styles, typography } from '../../styles/theme';
+import { Text, View } from 'react-native';
+
+const cardSource = Platform.OS === 'web'
+  ? require('../../assets/cards/card-w10-cracked@web.png')
+  : require('../../assets/cards/card-w10-cracked.png');
 
 export default function AboutScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>About screen</Text>
-    </View>
+    <ImageBackground
+      source={cardSource}
+      style={[styles.screen, { width: '100%', height: '100%' }]}
+      resizeMode="cover"
+    >
+      <View style={styles.screenCentered}>
+        <View style={styles.card}>
+          <Text style={typography.h2}>About screen</Text>
+          <Text style={typography.body}>Today I felt...</Text>
+        </View>
+      </View>
+    </ImageBackground>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#25292e',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    color: '#fff',
-  },
-});

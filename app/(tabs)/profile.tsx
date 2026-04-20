@@ -1,19 +1,33 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { ImageBackground, Platform, StyleSheet, Text, View } from 'react-native';
 
-export default function AboutScreen() {
+const cardSource = Platform.OS === 'web'
+  ? require('../../assets/cards/card-w7-starchart@web.png')
+  : require('../../assets/cards/card-w7-starchart.png');
+
+export default function ProfileScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Profile screen</Text>
-    </View>
+    <ImageBackground
+      source={cardSource}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={styles.container}>
+        <Text style={styles.text}>Profile screen</Text>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#25292e',
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   text: {
     color: '#fff',
