@@ -1,18 +1,29 @@
 import { Tabs } from 'expo-router';
-import { Image } from 'react-native';
+import {
+  AboutIcon,
+  HistoryIcon,
+  HomeIcon,
+  JournalIcon,
+  ProfileIcon,
+  SettingsIcon,
+} from '../../assets/icons';
+import { colors } from '../../styles/theme';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#ffd33d',
+        tabBarActiveTintColor: colors.gold.bronze,
+        tabBarInactiveTintColor: colors.stone.ash,
         headerStyle: {
-          backgroundColor: '#25292e',
+          backgroundColor: colors.background.pitch,
         },
         headerShadowVisible: false,
-        headerTintColor: '#fff',
+        headerTintColor: colors.text.primary,
         tabBarStyle: {
-          backgroundColor: '#25292e',
+          backgroundColor: colors.tabBar.background,
+          borderTopColor: colors.tabBar.border,
+          borderTopWidth: 0.5,
         },
       }}
     >
@@ -20,10 +31,10 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused, size }) => (
-            <Image
-              source={require('../../assets/nav-icons/nav-home-24.png')}
-              style={{ width: size, height: size, opacity: focused ? 1 : 0.5 }}
+          tabBarIcon: ({ focused }) => (
+            <HomeIcon
+              size={24}
+              color={focused ? colors.tabBar.active : colors.tabBar.inactive}
             />
           ),
         }}
@@ -32,10 +43,10 @@ export default function TabLayout() {
         name="history"
         options={{
           title: 'History',
-          tabBarIcon: ({ focused, size }) => (
-            <Image
-              source={require('../../assets/nav-icons/nav-history-24.png')}
-              style={{ width: size, height: size, opacity: focused ? 1 : 0.5 }}
+          tabBarIcon: ({ focused }) => (
+            <HistoryIcon
+              size={24}
+              color={focused ? colors.tabBar.active : colors.tabBar.inactive}
             />
           ),
         }}
@@ -44,10 +55,10 @@ export default function TabLayout() {
         name="journal"
         options={{
           title: 'Journal',
-          tabBarIcon: ({ focused, size }) => (
-            <Image
-              source={require('../../assets/nav-icons/nav-journal-24.png')}
-              style={{ width: size, height: size, opacity: focused ? 1 : 0.5 }}
+          tabBarIcon: ({ focused }) => (
+            <JournalIcon
+              size={24}
+              color={focused ? colors.tabBar.active : colors.tabBar.inactive}
             />
           ),
         }}
@@ -56,10 +67,10 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ focused, size }) => (
-            <Image
-              source={require('../../assets/nav-icons/nav-profile-24.png')}
-              style={{ width: size, height: size, opacity: focused ? 1 : 0.5 }}
+          tabBarIcon: ({ focused }) => (
+            <ProfileIcon
+              size={24}
+              color={focused ? colors.tabBar.active : colors.tabBar.inactive}
             />
           ),
         }}
@@ -68,10 +79,10 @@ export default function TabLayout() {
         name="about"
         options={{
           title: 'About',
-          tabBarIcon: ({ focused, size }) => (
-            <Image
-              source={require('../../assets/nav-icons/nav-about-24.png')}
-              style={{ width: size, height: size, opacity: focused ? 1 : 0.5 }}
+          tabBarIcon: ({ focused }) => (
+            <AboutIcon
+              size={24}
+              color={focused ? colors.tabBar.active : colors.tabBar.inactive}
             />
           ),
         }}
@@ -80,10 +91,10 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ focused, size }) => (
-            <Image
-              source={require('../../assets/nav-icons/nav-settings-24.png')}
-              style={{ width: size, height: size, opacity: focused ? 1 : 0.5 }}
+          tabBarIcon: ({ focused }) => (
+            <SettingsIcon
+              size={24}
+              color={focused ? colors.tabBar.active : colors.tabBar.inactive}
             />
           ),
         }}
