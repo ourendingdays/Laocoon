@@ -1,5 +1,5 @@
 import { ImageBackground, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { colors, radius, spacing, styles as themeStyles, typography } from '../../styles/theme';
+import { colors, spacing, styles as themeStyles, typography } from '../../styles/theme';
 
 const cardSource = Platform.OS === 'web'
   ? require('../../assets/cards/card-w10-cracked@web.png')
@@ -22,7 +22,7 @@ export default function AboutScreen() {
   return (
     <ImageBackground
       source={cardSource}
-      style={{ flex: 1, width: '100%', height: '100%' }}
+      style={styles.background}
       resizeMode="cover"
     >
       <ScrollView
@@ -120,6 +120,11 @@ export default function AboutScreen() {
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   scroll: {
     padding: spacing.lg,
     paddingBottom: spacing.xxxl,
