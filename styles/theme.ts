@@ -271,7 +271,7 @@ export const styles = {
   /** Standard screen container with centered content */
   screenCentered: {
     flex: 1,
-    backgroundColor: colors.background.app,
+    backgroundColor: 'transparent',
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
   },
