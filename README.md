@@ -1,50 +1,76 @@
-# Welcome to your Expo app 👋
+# LAOCOON — The Flame & The Scroll
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+> *Your mind is an oracle. Not the kind that speaks in riddles—the kind that speaks only when you listen.*
 
-## Get started
+A personal journaling app built for long-term self-reflection. Write daily, look back across any point in time, and watch the shape of your own thinking emerge.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## What It Is
 
-2. Start the app
+Laocoon is a private space to record what matters. Each day you write — your thoughts, your clarity, your confusion. No audience. No rules.
 
-   ```bash
-   npx expo start
-   ```
+But the real value comes later: return to any day, any year, and read the voice of who you were then. Watch patterns repeat. Measure the distance. Understand your own becoming.
 
-In the output, you'll find options to open the app in a
+The app is named for the Trojan priest Laocoon — a man who saw clearly when no one else would listen. This is built for that kind of clarity: not for being heard by the world, but for hearing *yourself*.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Screens
 
-## Get a fresh project
+| Screen | Purpose |
+|---|---|
+| **Home** | Daily writing field — lined card, clear + save |
+| **Journal** | Entry list and history |
+| **Calendar** | Navigate any month/year, see days with entries highlighted, tap to preview |
+| **Profile** | User profile |
+| **Settings** | App preferences |
+| **About** | App philosophy and story |
 
-When you're ready, run:
+---
+
+## Stack
+
+- **React Native** + **Expo** (file-based routing via Expo Router)
+- **TypeScript**
+- Tabs navigation — `app/(tabs)/`
+- Custom design system in `styles/theme.ts` — dark ancient-world palette (gold/bronze accents, stone/ash text)
+
+---
+
+## Getting Started
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Opens options to run on:
+- iOS simulator
+- Android emulator
+- Web browser
+- Expo Go (physical device)
 
-## Learn more
+---
 
-To learn more about developing your project with Expo, look at the following resources:
+## Project Structure
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```
+app/
+  (tabs)/         # Tab screens
+    index.tsx     # Home — writing field
+    journal.tsx   # Entry history
+    calendar.tsx  # Calendar view
+    profile.tsx
+    settings.tsx
+    about.tsx
+assets/
+  cards/          # Background card images (marble, frieze, cracked stone…)
+  icons/          # SVG icon components
+styles/
+  theme.ts        # Design tokens — colors, typography, spacing, radius
+```
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+*Your thoughts. Your timeline. Your truth.*
