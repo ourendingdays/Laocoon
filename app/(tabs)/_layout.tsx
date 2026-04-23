@@ -40,9 +40,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="history"
+        name="calendar"
         options={{
-          title: 'History',
+          title: 'Calendar',
           tabBarIcon: ({ focused }) => (
             <HistoryIcon
               size={24}
