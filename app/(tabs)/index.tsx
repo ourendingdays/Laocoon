@@ -149,4 +149,9 @@ const styles = StyleSheet.create({
   buttonLabelSave: {
     color: colors.background.app,
   },
+  preview: {
+    ...typography.body,
+    color: colors.text.secondary,
+    marginTop: spacing.md,
+  },
 });

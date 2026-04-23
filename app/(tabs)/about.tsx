@@ -59,8 +59,9 @@ export default function AboutScreen() {
           </Text>
           <Text style={styles.body}>
             This app is named for that clarity. Not for the tragedy, but for the sight itself. In a world of noise and distraction, you too have visions that matter. The app doesn't promise you'll be heard by the world. It promises you'll hear{' '}
-            <Text style={styles.italic}>yourself</Text>—clearly, consistently, across time.
+            <Text style={styles.italic}>yourself</Text>—clearly, consistently, across time.  That you'll know what you know. That you'll understand the shape of your own mind.
           </Text>
+          <Text style={styles.body}>Laocoon could not save Troy. But he could know the truth. That knowing—that clarity—is what we offer you.</Text>
         </Section>
 
         <Divider />
@@ -75,8 +76,9 @@ export default function AboutScreen() {
             <Text style={styles.italic}>time folds back on itself</Text>.
           </Text>
           <Text style={styles.body}>
-            Weeks, months, years later—return to this day. Read what you wrote at this exact moment. What were you carrying then? What have you learned? Watch your understanding compound across seasons, like sediment forming stone.
+            Weeks, months, years later—return to this day. Read what you wrote at this exact moment. What were you carrying then? What have you learned? What patterns repeat? What has shifted? Watch your understanding compound across seasons, like sediment forming stone.
           </Text>
+          <Text style={styles.body}>The calendar is yours alone. Navigate any day, any year. See the constellation of your own becoming.</Text>
         </Section>
 
         <Divider />
@@ -85,10 +87,25 @@ export default function AboutScreen() {
         <Section title="The Recognition">
           <Text style={styles.body}>
             As you write and reflect, the app learns what lifts you. It recognizes the patterns of your positive emotions—the moments when you felt most yourself, most alive, most at peace. Not to judge. Not to prescribe. But to{' '}
-            <Text style={styles.italic}>notice</Text>.
+            <Text style={styles.italic}>notice</Text>. To show you: this is when you flourish. This is your north star.
           </Text>
           <Text style={styles.body}>
             Over time, a map emerges. Not a self-help prescription. A mirror that remembers.
+          </Text>
+        </Section>
+
+        <Divider />
+
+        {/* Why This Matters */}
+        <Section title="Why This Matters">
+          <Text style={styles.body}>
+            We live in a world of endless noise and shallow reflection. You scroll, you consume, you forget. But your interior life—your actual thoughts, your real progress, your genuine transformation—that's the only thing worth recording.
+          </Text>
+          <Text style={styles.body}>
+            This app honors that. It treats your daily thoughts like an ancient text. It believes that understanding yourself is the most important work you can do. It knows that who you were last year, still speaking to you from the past, is a teacher.
+          </Text>
+          <Text style={styles.body}>
+            You are not trying to optimize yourself. You are trying to <Text style={styles.italic}>know</Text> yourself.
           </Text>
         </Section>
 
