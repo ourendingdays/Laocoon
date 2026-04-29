@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laocoon — Journal</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAFP0lEQVRoge2Z609TZxzHP885hRZ6AVEuhSpEiTinEza8RIduCsmyeEtgW2Kyvdnl1ZK9WLJs+wuWLboX24slJns3l+mWzUsyY6aLiQhL8NKgbqDOirTQAsXaAoXS8+wFQlgH5UAfZYv7vjr9nd/l++35PZdzHsHs0NyF7uelYB9C7EDiBooBPU2MCowDfoTwYcif9aT4xh/2d8/mLGYyFhWVNmjwCfDso2I5DxgSedg6mvVRV6RrMPVmqgDdXVh2UAr53mMiNx8ENWgMhALN043TBeglhaU/ItjzmInNByNSiFeDQf+pSYM2eeEuLj2kmrxFF1j0Gbt0ocgRUh5zL3PXThoETPX8GZWVNE3w4ZtbMCR8+nUrhiFVpveNjcc3hMPhBzognA7nd0CpygpvNVazc3MFy0tc2HOyuPx7UGX6fIvIkrHh6DndXejeDuJjldlf3FTOG3vXT/2uqlhKb/8QvkBEXRFBrd2Re1gzBPvVZYU8p5W3m2r+YX+nqRqX3aqyVI6QepMmhKhTmbWpYQ32HAsAdrsFu/3hdW4WjQ1VKkshYZ+GpExVQosueGHTCgB0XWC1alitGvrDmejFzeVKZyUBqzWgSFXCFaX5U22SxAAhQAiS0gAgz2FluTtPVTkAj4bCvc0S1wT5QChGpy88Ze/wDdDTFwOgwGVTVQ7Aos3tYx7hSByAFq+f6NDolD02nKDF6wdg4P6IypIoFXDXHyEQijEcT/Drb10YhsQwJGdbfAyPjBMIxbjbo3AqRbEAQ0q+/PYSZUVOLrR10+rtofVqDxcv+/EUO/jiSBtS6YIMoqSoVHFK8JQ48QejVFdNzA9XO0KUFTvp7o2qLoVlPs65uTY2rF2NYRi0/3GL4eH4jH6TRG22bACkJC353Fwb69dUomka3usdDI+MzuqbCtMC8vOdvLa3HkOCy2EnGhviRuedtDEdd/pN5a7wuKnbUk0kOsQza1dx9PgvDEbMPS3TLfTK3nqcDjve6ze55L1hKvm2Gg8AzVdmfSP8GzbWrGXdU5VEo0N8f/KsqRjzTyDPidNhZ2ddLTvraucOAHRtYtXdus38MEskxtGE+bnFtACbNZuTp89z884908kXgqerVrJ9q/lXcdNSXQ77IycPcL3jTwryXKb9la4Di4H/BSw25rWQpeJA40ssmUe/zoTByAOO/HB6wfEZCciksCo82S1ks2aj6Zn9B0bSID46tuD4jATU79hEji2zN6yReJxTZy4sOD4jAZkUVoUnewysKi/DZjP3sap/MEIwNJBJuRmRkYDCZQWmBSSTxr9PQOuldlU8FgyNiTOp/yrGNSCw2CwyQK8moHOxWSwcMqBJyU9mXA3DICsroyFjChaLjmEYJr3FeYvUkseE1D8DctK53r7r54N3X8ff05c5yzQoLSrE122uqzXJCUswGAy5C8s+l0KmPaVxOR3cj8RoaWtndCyhhGwqbNZsdtVtJCfHxPZE0BYIBZoFQEFBgSvbYvMCFbP516xbzcoKD8uW5tPS1k7n7S7icfMfoNISt1mpqlzBlufW0z9wn1u+e3iv3UwbI4XYFQz6z2kA4XD4gYHYDwzPFnDlWid9A4MkEkn2NNSxqlzZuQiVFR52N9SRSIwT6h+ckzxwMBj0n4OUk/ri4rLdQsqjzDEeFhMCjveEAo1AElI2c8Gg/5QB9YDSM1F1kIemk4cZdqOhUOCibSx7DcivpjsuKgRtUohdvaGe90nhlPbEzbPUUzauGweQ8mWEqAA8ZLh/MoEkEATZDeK8JjkR6As0AzN+n/wLhbHA2cUI/rEAAAAASUVORK5CYII=" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --void:       #0a0806;
+      --app:        #131009;
+      --pitch:      #1c1710;
+      --charcoal:   #221e18;
+
+      --aureate:    #e8c87a;
+      --bronze:     #c9a96e;
+      --patina:     #a8843e;
+      --verdigris:  #7a5c28;
+      --ember:      #3d2e12;
+
+      --marble:     #d4cfc8;
+      --limestone:  #b8a99a;
+      --ash:        #7a6e62;
+      --cinder:     #3a3228;
+
+      --border-subtle:  #3a3228;
+      --border-default: #4a3e30;
+    }
+
+    html, body {
+      height: 100%;
+      background-color: var(--app);
+      color: var(--marble);
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+
+    /* ── Noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Ambient glow behind hero ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(201,169,110,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Header bar ── */
+    header {
+      width: 100%;
+      max-width: 840px;
+      padding: 32px 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .wordmark {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+      color: var(--bronze);
+    }
+
+    .status-pill {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--ash);
+      border: 0.5px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 4px 12px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      width: 100%;
+      max-width: 840px;
+      padding: 96px 24px 72px;
+      text-align: center;
+    }
+
+    .overline {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--ash);
+      margin-bottom: 24px;
+    }
+
+    .hero-glyph {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 32px;
+      opacity: 0.85;
+    }
+
+    h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 300;
+      letter-spacing: 4px;
+      color: var(--marble);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: clamp(13px, 2vw, 16px);
+      font-weight: 300;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--bronze);
+      margin-bottom: 32px;
+    }
+
+    .divider {
+      width: 48px;
+      height: 0.5px;
+      background: var(--border-default);
+      margin: 0 auto 32px;
+    }
+
+    .hero-body {
+      font-size: 16px;
+      line-height: 28px;
+      color: var(--limestone);
+      max-width: 480px;
+      margin: 0 auto 48px;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--void);
+      background: var(--bronze);
+      border: none;
+      border-radius: 8px;
+      padding: 12px 28px;
+      cursor: pointer;
+      transition: background 200ms, box-shadow 200ms;
+    }
+
+    .btn-primary:hover {
+      background: var(--aureate);
+      box-shadow: 0 0 20px rgba(201,169,110,0.25);
+    }
+
+    .btn-ghost {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--bronze);
+      background: transparent;
+      border: 0.5px solid var(--bronze);
+      border-radius: 8px;
+      padding: 12px 28px;
+      cursor: pointer;
+      transition: border-color 200ms, color 200ms;
+    }
+
+    .btn-ghost:hover {
+      color: var(--aureate);
+      border-color: var(--aureate);
+    }
+
+    /* ── Feature cards ── */
+    .cards {
+      width: 100%;
+      max-width: 840px;
+      padding: 0 24px 96px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--pitch);
+      border: 0.5px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 24px;
+      transition: border-color 300ms;
+    }
+
+    .card:hover {
+      border-color: var(--verdigris);
+    }
+
+    .card-icon {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 16px;
+      opacity: 0.9;
+    }
+
+    .card h3 {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      color: var(--marble);
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 13px;
+      line-height: 21px;
+      color: var(--ash);
+    }
+
+    /* ── Footer ── */
+    footer {
+      width: 100%;
+      border-top: 0.5px solid var(--border-subtle);
+      padding: 24px;
+      text-align: center;
+    }
+
+    footer p {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--ash);
+    }
+
+    footer span {
+      color: var(--verdigris);
+    }
+
+    /* ── Fade-in animation ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero        { animation: fadeUp 0.8s ease both; }
+    .cards       { animation: fadeUp 0.8s 0.2s ease both; }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <header>
+      <span class="wordmark">Laocoon</span>
+      <span class="status-pill">Coming Soon</span>
+    </header>
+
+    <section class="hero">
+      <img class="hero-glyph" src="assets/app-icons/app-icon-B-flame-scroll-192.png" alt="Laocoon — Flame &amp; Scroll" />
+
+      <p class="overline">A personal journal</p>
+      <h1>Laocoon</h1>
+      <p class="subtitle">Write what the gods cannot silence</p>
+
+      <div class="divider"></div>
+
+      <p class="hero-body">
+        A private space for thought, memory, and reflection — built with the weight of ancient stone and the quiet of a lamp at night.
+      </p>
+
+      <div class="cta-group">
+        <a class="btn-primary" href="#">Notify Me</a>
+        <a class="btn-ghost"   href="#">Learn More</a>
+      </div>
+    </section>
+
+    <section class="cards">
+
+      <div class="card">
+        <!-- Scroll icon -->
+        <svg class="card-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="7" y="6" width="18" height="22" rx="2" stroke="#c9a96e" stroke-width="1"/>
+          <line x1="11" y1="11" x2="21" y2="11" stroke="#7a5c28" stroke-width="1"/>
+          <line x1="11" y1="15" x2="21" y2="15" stroke="#7a5c28" stroke-width="1"/>
+          <line x1="11" y1="19" x2="17" y2="19" stroke="#7a5c28" stroke-width="1"/>
+        </svg>
+        <h3>Daily Entries</h3>
+        <p>Capture thoughts, moods, and moments. Every word preserved like ink on papyrus.</p>
+      </div>
+
+      <div class="card">
+        <!-- Star chart icon -->
+        <svg class="card-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="11" stroke="#c9a96e" stroke-width="1" stroke-dasharray="2 3"/>
+          <circle cx="16" cy="16" r="1.5" fill="#c9a96e"/>
+          <circle cx="10" cy="11" r="1" fill="#7a5c28"/>
+          <circle cx="22" cy="13" r="1" fill="#7a5c28"/>
+          <circle cx="13" cy="22" r="1" fill="#7a5c28"/>
+          <line x1="11" y1="12" x2="15" y2="15.5" stroke="#3d2e12" stroke-width="1"/>
+          <line x1="17" y1="15.5" x2="21" y2="14" stroke="#3d2e12" stroke-width="1"/>
+          <line x1="15" y1="17" x2="13" y2="21" stroke="#3d2e12" stroke-width="1"/>
+        </svg>
+        <h3>Calendar View</h3>
+        <p>Navigate your past like an ancient star chart — every day a constellation of memory.</p>
+      </div>
+
+      <div class="card">
+        <!-- Flame icon -->
+        <svg class="card-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 26 C10 26 7 22 7 18 C7 13 12 10 12 7 C13 11 16 12 16 12 C16 12 14 9 17 6 C18 10 22 12 22 16 C22 22 22 26 16 26Z"
+                stroke="#c9a96e" stroke-width="1" fill="none" stroke-linejoin="round"/>
+          <path d="M16 22 C13 22 12 20 12 18 C12 16 14 15 14 15 C14 17 16 18 16 18 C16 18 15 16 17 14 C18 16 20 17 20 19 C20 21 19 22 16 22Z"
+                fill="#3d2e12" stroke="#7a5c28" stroke-width="0.5"/>
+        </svg>
+        <h3>Mood Tracking</h3>
+        <p>Mark the tenor of each day. Over time, patterns emerge from the embers.</p>
+      </div>
+
+      <div class="card">
+        <!-- Lock/privacy icon -->
+        <svg class="card-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="14" width="16" height="12" rx="2" stroke="#c9a96e" stroke-width="1"/>
+          <path d="M11 14 V11 A5 5 0 0 1 21 11 V14" stroke="#c9a96e" stroke-width="1" fill="none"/>
+          <circle cx="16" cy="20" r="2" fill="#7a5c28"/>
+          <line x1="16" y1="20" x2="16" y2="23" stroke="#7a5c28" stroke-width="1"/>
+        </svg>
+        <h3>Private by Design</h3>
+        <p>Your words remain yours. No cloud, no analytics — only you and the page.</p>
+      </div>
+
+    </section>
+
+    <footer>
+      <p>Laocoon &nbsp;·&nbsp; <span>In development</span> &nbsp;·&nbsp; Built for quiet reflection</p>
+    </footer>
+
+  </div>
+</body>
+</html>
