@@ -99,6 +99,22 @@ export default function TabLayout() {
           ),
         }}
       />
+
+
+      <Tabs.Screen
+        name="db"
+        options={{
+          title: 'DB Test',
+          tabBarIcon: ({ focused }) => (
+            <SettingsIcon
+              size={24}
+              color={focused ? colors.tabBar.active : colors.tabBar.inactive}
+            />
+          ),
+        }}
+      />
+
+
     </Tabs>
   );
 }
