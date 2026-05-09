@@ -23,12 +23,10 @@ export default function AboutScreen() {
     <ImageBackground
       source={cardSource}
       style={styles.background}
-      resizeMode="cover"
-    >
+      resizeMode="cover">
       <ScrollView
         contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-      >
+        showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.appTitle}>LAOCOON</Text>
@@ -37,7 +35,7 @@ export default function AboutScreen() {
             Your mind is an oracle. Not the kind that speaks in riddles—the kind that speaks only when you listen.
           </Text>
           <Text style={[styles.body, { marginTop: spacing.sm }]}>
-            Every day, you carry thoughts too large for ordinary conversation. Moments that shift your understanding. Feelings that circle back. Patterns you sense but cannot name. This app is where those thoughts find form.
+            Every day, you carry thoughts too large for ordinary conversation. Moments that shift your understanding. Feelings that circle back, like serpents coiling in dark waves. Patterns you sense but cannot name. This app is where those thoughts find form.
           </Text>
         </View>
 
@@ -48,7 +46,7 @@ export default function AboutScreen() {
           <Text style={styles.body}>
             In ancient Troy, there lived a priest named Laocoon. He was given a terrible gift: the sight of what was coming. He saw the wooden horse. He understood the danger. He tried to warn his people—
             <Text style={styles.italic}>do not bring this inside the walls</Text>
-            —but his voice was drowned out by those who would not listen. He was killed, silenced, erased.
+            —but his voice was drowned out by those who would not listen. He was killed by sea serpents, silenced in the dark obsidian ground, erased in the age of bronze strokes.
           </Text>
           <Text style={styles.body}>
             Laocoon knew something true. He tried to speak it. The world was not ready.
@@ -87,7 +85,7 @@ export default function AboutScreen() {
         <Section title="The Recognition">
           <Text style={styles.body}>
             As you write and reflect, the app learns what lifts you. It recognizes the patterns of your positive emotions—the moments when you felt most yourself, most alive, most at peace. Not to judge. Not to prescribe. But to{' '}
-            <Text style={styles.italic}>notice</Text>. To show you: this is when you flourish. This is your north star.
+            <Text style={styles.italic}>notice</Text>. To show you: this is when you flourish. This is your north star in the still Trojan night, starfielded under the  moon.
           </Text>
           <Text style={styles.body}>
             Over time, a map emerges. Not a self-help prescription. A mirror that remembers.
@@ -117,7 +115,7 @@ export default function AboutScreen() {
             Light the torch. Open the scroll. Write what is true today.
           </Text>
           <Text style={styles.body}>
-            Then, when the moment is right, look back. Read the voice of who you were. Measure the distance. Feel the continuity. Understand the shape of your own becoming.
+            Then, when the moment is right, look back. Light a sacred fire above a journal. Read the voice of who you were. Measure the distance. Feel the continuity. Understand the shape of your own becoming.
           </Text>
           <Text style={styles.body}>
             This is not a diary. It is a conversation with yourself across time.
