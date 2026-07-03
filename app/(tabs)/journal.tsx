@@ -26,6 +26,7 @@ export default function JournalScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<Entry | null>(null);
+  const [draftTitle, setDraftTitle] = useState('');
   const [draftContent, setDraftContent] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -50,11 +51,13 @@ export default function JournalScreen() {
 
   function openEditor(entry: Entry) {
     setEditing(entry);
+    setDraftTitle(entry.title ?? '');
     setDraftContent(entry.content);
   }
 
   function closeEditor() {
     setEditing(null);
+    setDraftTitle('');
     setDraftContent('');
   }
 
@@ -62,9 +65,13 @@ export default function JournalScreen() {
     if (!editing) return;
     const content = draftContent.trim();
     if (!content) return;
+    const trimmedTitle = draftTitle.trim();
     setSaving(true);
     try {
-      const updated = await updateEntry(editing.entry_id, { content });
+      const updated = await updateEntry(editing.entry_id, {
+        content,
+        title: trimmedTitle.length > 0 ? trimmedTitle : null,
+      });
       setEntries((prev) => prev.map((e) => (e.entry_id === updated.entry_id ? updated : e)));
       closeEditor();
     } catch (err) {
@@ -116,6 +123,7 @@ export default function JournalScreen() {
                     minute: '2-digit',
                   })}
                 </Text>
+                {entry.title && <Text style={styles.entryTitle}>{entry.title}</Text>}
                 <Text style={styles.entryContent} numberOfLines={6}>
                   {entry.content}
                 </Text>
@@ -148,6 +156,13 @@ export default function JournalScreen() {
         <Pressable style={styles.modalBackdrop} onPress={closeEditor}>
           <Pressable style={styles.editorCard} onPress={() => {}}>
             <Text style={styles.editorTitle}>Edit entry</Text>
+            <TextInput
+              style={styles.editorTitleInput}
+              value={draftTitle}
+              onChangeText={setDraftTitle}
+              placeholder="Title (optional)"
+              placeholderTextColor={colors.text.placeholder}
+            />
             <TextInput
               style={styles.editorInput}
               multiline
@@ -220,6 +235,10 @@ const styles = StyleSheet.create({
   entryDate: {
     ...typography.caption,
   },
+  entryTitle: {
+    ...typography.h3,
+    color: colors.gold.bronze,
+  },
   entryContent: {
     ...typography.body,
   },
@@ -254,6 +273,13 @@ const styles = StyleSheet.create({
   },
   editorTitle: {
     ...typography.h2,
+  },
+  editorTitleInput: {
+    ...typography.h3,
+    backgroundColor: colors.background.pitch,
+    borderRadius: radius.md,
+    padding: spacing.sm,
+    color: colors.text.primary,
   },
   editorInput: {
     ...typography.body,

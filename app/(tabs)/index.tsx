@@ -27,11 +27,13 @@ type SaveState =
   | { kind: 'error'; message: string };
 
 export default function Index() {
+  const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [saveState, setSaveState] = useState<SaveState>({ kind: 'idle' });
   const inputRef = useRef<TextInput>(null);
 
   function handleClear() {
+    setTitle('');
     setText('');
     setSaveState({ kind: 'idle' });
     inputRef.current?.focus();
@@ -43,9 +45,14 @@ export default function Index() {
       setSaveState({ kind: 'error', message: 'Write something first.' });
       return;
     }
+    const trimmedTitle = title.trim();
     setSaveState({ kind: 'saving' });
     try {
-      await createEntry({ content });
+      await createEntry({
+        content,
+        title: trimmedTitle.length > 0 ? trimmedTitle : null,
+      });
+      setTitle('');
       setText('');
       setSaveState({ kind: 'saved' });
       inputRef.current?.focus();
@@ -70,6 +77,17 @@ export default function Index() {
       >
         <View style={[themeStyles.card, styles.cardOverlay]}>
           <Text style={styles.prompt}>The scroll is opened ...</Text>
+
+          <TextInput
+            style={styles.titleInput}
+            value={title}
+            onChangeText={(next) => {
+              setTitle(next);
+              if (saveState.kind !== 'idle') setSaveState({ kind: 'idle' });
+            }}
+            placeholder="Title (optional)"
+            placeholderTextColor={colors.text.placeholder}
+          />
 
           <View style={styles.linedContainer}>
             {Array.from({ length: LINE_COUNT }).map((_, i) => (
@@ -151,9 +169,18 @@ const styles = StyleSheet.create({
   },
   prompt: {
     ...typography.h2,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
     fontStyle: 'italic',
     color: colors.gold.bronze,
+  },
+  titleInput: {
+    ...typography.h3,
+    color: colors.text.primary,
+    borderBottomWidth: 0.5,
+    borderBottomColor: colors.border.subtle,
+    paddingVertical: spacing.xs,
+    marginBottom: spacing.md,
+    backgroundColor: 'transparent',
   },
   linedContainer: {
     position: 'relative',
