@@ -35,15 +35,29 @@ export default function SignUpScreen() {
       return;
     }
 
-    if (data.user) {
-      const { error: profileError } = await supabase.from('user_profiles').insert({
-        id: data.user.id,
-        consent_given_at: new Date().toISOString(),
-        privacy_policy_version: PRIVACY_POLICY_VERSION,
+    if (data.session && data.user) {
+      await supabase.auth.setSession({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
       });
+
+      const { error: profileError, data: profileRows } = await supabase
+        .from('user_profiles')
+        .update({
+          consent_given_at: new Date().toISOString(),
+          privacy_policy_version: PRIVACY_POLICY_VERSION,
+        })
+        .eq('id', data.user.id)
+        .select();
+
       if (profileError) {
         setLoading(false);
-        setError(profileError.message);
+        setError(`Consent not recorded: ${profileError.message}`);
+        return;
+      }
+      if (!profileRows || profileRows.length === 0) {
+        setLoading(false);
+        setError('Consent not recorded — please contact support.');
         return;
       }
     }
