@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ImageBackground,
   Modal,
@@ -10,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { listEntries, type Entry } from '../../lib/entries';
 import { colors, radius, spacing, styles as themeStyles, typography } from '../../styles/theme';
 
 const cardSource = Platform.OS === 'web'
@@ -18,19 +20,10 @@ const cardSource = Platform.OS === 'web'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-// Sample data — replace with real storage later
-const SAMPLE_ENTRIES: Record<string, string> = {
-  '2024-01-05': 'Started my journal journey today. Feeling hopeful about the new year!',
-  '2024-01-12': 'Had a great conversation with an old friend. Brought back so many memories.',
-  '2024-01-20': 'Finished reading that book. Really made me think about life differently.',
-  '2024-02-14': "Valentine's Day. Spending time with loved ones, reflecting on gratitude.",
-  '2024-02-28': 'End of February. Progress feels real when you look back at journal entries.',
-  '2024-03-10': 'Spring is finally here! Nature always reminds me to slow down.',
-  '2024-03-25': 'Accomplished something I thought was impossible. Growth is real.',
-  '2024-04-05': 'Rainy day. Perfect for reflection and hot tea.',
-  '2024-04-18': 'Started a new project. Excited about the possibilities!',
-  '2026-04-23': 'Today is a good day.',
-};
+function localDateKey(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
 
 function toDateStr(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -73,6 +66,24 @@ export default function CalendarScreen() {
   const [selectedEntry, setSelectedEntry] = useState<{ dateStr: string; text: string } | null>(null);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [pickerYear, setPickerYear] = useState(now.getFullYear());
+  const [entries, setEntries] = useState<Entry[]>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      listEntries()
+        .then(setEntries)
+        .catch(() => setEntries([]));
+    }, []),
+  );
+
+  const entriesByDate = useMemo(() => {
+    const map: Record<string, Entry[]> = {};
+    for (const e of entries) {
+      const key = localDateKey(e.created_at);
+      (map[key] ||= []).push(e);
+    }
+    return map;
+  }, [entries]);
 
   function previousMonth() {
     if (month === 0) { setYear(y => y - 1); setMonth(11); }
@@ -138,7 +149,8 @@ export default function CalendarScreen() {
           {/* Calendar grid */}
           <View style={styles.grid}>
             {days.map(({ day, dateStr, isOtherMonth }) => {
-              const hasEntry = !!SAMPLE_ENTRIES[dateStr];
+              const dayEntries = entriesByDate[dateStr];
+              const hasEntry = !!dayEntries && dayEntries.length > 0;
               return (
                 <TouchableOpacity
                   key={dateStr}
@@ -147,7 +159,13 @@ export default function CalendarScreen() {
                     isOtherMonth ? styles.dayCellOther : styles.dayCellCurrent,
                     hasEntry && styles.dayCellEntry,
                   ]}
-                  onPress={() => hasEntry && setSelectedEntry({ dateStr, text: SAMPLE_ENTRIES[dateStr] })}
+                  onPress={() => {
+                    if (!hasEntry) return;
+                    const preview = dayEntries
+                      .map((e) => e.content)
+                      .join('\n\n— — —\n\n');
+                    setSelectedEntry({ dateStr, text: preview });
+                  }}
                   activeOpacity={hasEntry ? 0.7 : 1}
                 >
                   <Text
