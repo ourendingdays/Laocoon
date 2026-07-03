@@ -177,6 +177,9 @@ export default function CalendarScreen() {
                   >
                     {day}
                   </Text>
+                  {hasEntry && (
+                    <Text style={styles.entryCount}>Notes : {dayEntries.length}</Text>
+                  )}
                 </TouchableOpacity>
               );
             })}
@@ -338,6 +341,15 @@ const styles = StyleSheet.create({
   },
   dayTextEntry: {
     color: colors.text.primary,
+    fontWeight: '600',
+  },
+  entryCount: {
+    position: 'absolute',
+    top: 2,
+    right: 4,
+    ...typography.caption,
+    color: colors.gold.bronze,
+    fontSize: 15,
     fontWeight: '600',
   },
   entryCard: {
