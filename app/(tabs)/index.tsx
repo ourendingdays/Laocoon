@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import {
-  Alert,
   ImageBackground,
   Platform,
   ScrollView,
@@ -11,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { DeleteIcon, NewEntryIcon } from '../../assets/icons';
+import { createEntry } from '../../lib/entries';
 import { colors, spacing, styles as themeStyles, typography } from '../../styles/theme';
 
 const LINE_HEIGHT = 36;
@@ -20,20 +20,40 @@ const cardSource = Platform.OS === 'web'
   ? require('../../assets/cards/card-w9-frieze@web.png')
   : require('../../assets/cards/card-w9-frieze.png');
 
+type SaveState =
+  | { kind: 'idle' }
+  | { kind: 'saving' }
+  | { kind: 'saved' }
+  | { kind: 'error'; message: string };
+
 export default function Index() {
   const [text, setText] = useState('');
+  const [saveState, setSaveState] = useState<SaveState>({ kind: 'idle' });
   const inputRef = useRef<TextInput>(null);
 
   function handleClear() {
     setText('');
+    setSaveState({ kind: 'idle' });
     inputRef.current?.focus();
   }
 
-  function handleSave() {
-    if (text.trim()) {
-      Alert.alert('Saved', text);
-    } else {
-      Alert.alert('Nothing to save', 'Write something first.');
+  async function handleSave() {
+    const content = text.trim();
+    if (!content) {
+      setSaveState({ kind: 'error', message: 'Write something first.' });
+      return;
+    }
+    setSaveState({ kind: 'saving' });
+    try {
+      await createEntry({ content });
+      setText('');
+      setSaveState({ kind: 'saved' });
+      inputRef.current?.focus();
+    } catch (err) {
+      setSaveState({
+        kind: 'error',
+        message: err instanceof Error ? err.message : 'Could not save.',
+      });
     }
   }
 
@@ -49,9 +69,8 @@ export default function Index() {
         showsVerticalScrollIndicator={false}
       >
         <View style={[themeStyles.card, styles.cardOverlay]}>
-          <Text style={styles.prompt}>What do you want to write?</Text>
+          <Text style={styles.prompt}>The scroll is opened ...</Text>
 
-          {/* Lined text area — absolute line Views behind the TextInput */}
           <View style={styles.linedContainer}>
             {Array.from({ length: LINE_COUNT }).map((_, i) => (
               <View
@@ -66,22 +85,48 @@ export default function Index() {
               placeholder="Start typing..."
               placeholderTextColor={colors.text.placeholder}
               value={text}
-              onChangeText={setText}
+              onChangeText={(next) => {
+                setText(next);
+                if (saveState.kind !== 'idle') setSaveState({ kind: 'idle' });
+              }}
               autoFocus
               textAlignVertical="top"
             />
           </View>
 
-          {/* Buttons */}
+          <View style={styles.status}>
+            {saveState.kind === 'saved' && (
+              <Text style={styles.statusSaved}>Saved.</Text>
+            )}
+            {saveState.kind === 'error' && (
+              <Text style={styles.statusError}>{saveState.message}</Text>
+            )}
+          </View>
+
           <View style={styles.buttonRow}>
-            <TouchableOpacity style={[themeStyles.buttonGhost, styles.buttonBase]} onPress={handleClear} activeOpacity={0.7}>
+            <TouchableOpacity
+              style={[themeStyles.buttonGhost, styles.buttonBase]}
+              onPress={handleClear}
+              activeOpacity={0.7}
+            >
               <DeleteIcon size={18} color={colors.text.secondary} />
               <Text style={styles.buttonLabel}>Clear</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[themeStyles.buttonPrimary, styles.buttonBase]} onPress={handleSave} activeOpacity={0.7}>
+            <TouchableOpacity
+              style={[
+                themeStyles.buttonPrimary,
+                styles.buttonBase,
+                saveState.kind === 'saving' && styles.buttonDisabled,
+              ]}
+              onPress={handleSave}
+              disabled={saveState.kind === 'saving'}
+              activeOpacity={0.7}
+            >
               <NewEntryIcon size={18} color={colors.background.app} />
-              <Text style={[styles.buttonLabel, styles.buttonLabelSave]}>Save</Text>
+              <Text style={[styles.buttonLabel, styles.buttonLabelSave]}>
+                {saveState.kind === 'saving' ? 'Saving…' : 'Save'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -101,14 +146,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: spacing.lg,
   },
-  // Semi-transparent override — themeStyles.card uses opaque background.pitch,
-  // but here we need transparency over the ImageBackground.
   cardOverlay: {
     backgroundColor: 'rgba(19, 16, 9, 0.75)',
   },
   prompt: {
     ...typography.h2,
     marginBottom: spacing.lg,
+    fontStyle: 'italic',
+    color: colors.gold.bronze,
   },
   linedContainer: {
     position: 'relative',
@@ -130,17 +175,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     backgroundColor: 'transparent',
   },
+  status: {
+    minHeight: 22,
+    marginTop: spacing.sm,
+  },
+  statusSaved: {
+    ...typography.bodySmall,
+    color: colors.semantic.success,
+  },
+  statusError: {
+    ...typography.bodySmall,
+    color: colors.semantic.error,
+  },
   buttonRow: {
     flexDirection: 'row',
     gap: spacing.sm,
-    marginTop: spacing.lg,
+    marginTop: spacing.sm,
   },
-  // Extends themeStyles.buttonGhost / buttonPrimary with row layout for icon+label
   buttonBase: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     gap: spacing.xs,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   buttonLabel: {
     ...typography.label,
@@ -148,10 +207,5 @@ const styles = StyleSheet.create({
   },
   buttonLabelSave: {
     color: colors.background.app,
-  },
-  preview: {
-    ...typography.body,
-    color: colors.text.secondary,
-    marginTop: spacing.md,
   },
 });

@@ -4,10 +4,10 @@ import { Platform } from 'react-native'
 import 'react-native-url-polyfill/auto'
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
 
 // On web during SSR, `window` doesn't exist — give Supabase a no-op storage.
-// In the browser, use localStorage. On native, use AsyncStorage.
+// In the browser, use localStorage. On native (iOS/Android), use AsyncStorage.
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
     if (Platform.OS === 'web') {
