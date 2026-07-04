@@ -13,15 +13,15 @@ import {
   HistoryIcon,
   LanguageIcon,
   MoonIcon,
-} from '../../assets/icons';
-import { AppText } from '../../components/AppText';
+} from '../assets/icons';
+import { AppText } from '../components/AppText';
 import {
   usePreferences,
   type DefaultDayView,
   type FontSizePref,
   type ThemePref,
-} from '../../lib/preferences';
-import { getCardOverlayColor, getCardSource, useTheme, type Theme } from '../../styles/theme';
+} from '../lib/preferences';
+import { getCardOverlayColor, getCardSource, useTheme, type Theme } from '../styles/theme';
 
 const THEME_OPTIONS: { value: ThemePref; label: string }[] = [
   { value: 'dark', label: 'Dark' },

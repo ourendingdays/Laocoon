@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
-import { AppText as Text } from '../../components/AppText';
-import { getCardSource, useTheme, type Theme } from '../../styles/theme';
+import { AppText as Text } from '../components/AppText';
+import { getCardSource, useTheme, type Theme } from '../styles/theme';
 
 export default function AboutScreen() {
   const theme = useTheme();

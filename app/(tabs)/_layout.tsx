@@ -1,11 +1,9 @@
 import { Tabs } from 'expo-router';
 import {
-  AboutIcon,
   HistoryIcon,
   HomeIcon,
   JournalIcon,
   ProfileIcon,
-  SettingsIcon,
 } from '../../assets/icons';
 import { useTheme } from '../../styles/theme';
 
@@ -71,30 +69,6 @@ export default function TabLayout() {
           title: 'Profile',
           tabBarIcon: ({ focused }) => (
             <ProfileIcon
-              size={24}
-              color={focused ? colors.tabBar.active : colors.tabBar.inactive}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="about"
-        options={{
-          title: 'About',
-          tabBarIcon: ({ focused }) => (
-            <AboutIcon
-              size={24}
-              color={focused ? colors.tabBar.active : colors.tabBar.inactive}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ focused }) => (
-            <SettingsIcon
               size={24}
               color={focused ? colors.tabBar.active : colors.tabBar.inactive}
             />

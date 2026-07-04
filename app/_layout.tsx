@@ -32,15 +32,42 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function RootStack() {
+  const theme = useTheme();
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="(auth)" />
+      <Stack.Screen
+        name="settings"
+        options={{
+          headerShown: true,
+          title: 'Settings',
+          headerStyle: { backgroundColor: theme.colors.background.pitch },
+          headerTintColor: theme.colors.text.primary,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="about"
+        options={{
+          headerShown: true,
+          title: 'About',
+          headerStyle: { backgroundColor: theme.colors.background.pitch },
+          headerTintColor: theme.colors.text.primary,
+          headerShadowVisible: false,
+        }}
+      />
+    </Stack>
+  );
+}
+
 export default function RootLayout() {
   return (
     <PreferencesProvider>
       <SessionProvider>
         <AuthGate>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="(auth)" />
-          </Stack>
+          <RootStack />
         </AuthGate>
       </SessionProvider>
     </PreferencesProvider>
