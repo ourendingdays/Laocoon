@@ -1,7 +1,6 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   ImageBackground,
-  Platform,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -11,14 +10,10 @@ import {
 import { DeleteIcon, NewEntryIcon } from '../../assets/icons';
 import { AppText as Text } from '../../components/AppText';
 import { createEntry } from '../../lib/entries';
-import { colors, spacing, styles as themeStyles, typography } from '../../styles/theme';
+import { getCardOverlayColor, getCardSource, useTheme, type Theme } from '../../styles/theme';
 
 const LINE_HEIGHT = 36;
 const LINE_COUNT = 8;
-
-const cardSource = Platform.OS === 'web'
-  ? require('../../assets/cards/card-w9-frieze@web.png')
-  : require('../../assets/cards/card-w9-frieze.png');
 
 type SaveState =
   | { kind: 'idle' }
@@ -27,6 +22,9 @@ type SaveState =
   | { kind: 'error'; message: string };
 
 export default function Index() {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const cardSource = getCardSource('frieze', theme.mode);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [saveState, setSaveState] = useState<SaveState>({ kind: 'idle' });
@@ -75,7 +73,7 @@ export default function Index() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={[themeStyles.card, styles.cardOverlay]}>
+        <View style={[theme.styles.card, styles.cardOverlay]}>
           <Text style={styles.prompt}>The scroll is opened ...</Text>
 
           <TextInput
@@ -86,7 +84,7 @@ export default function Index() {
               if (saveState.kind !== 'idle') setSaveState({ kind: 'idle' });
             }}
             placeholder="Title (optional)"
-            placeholderTextColor={colors.text.placeholder}
+            placeholderTextColor={theme.colors.text.placeholder}
           />
 
           <View style={styles.linedContainer}>
@@ -101,7 +99,7 @@ export default function Index() {
               style={styles.input}
               multiline
               placeholder="Start typing..."
-              placeholderTextColor={colors.text.placeholder}
+              placeholderTextColor={theme.colors.text.placeholder}
               value={text}
               onChangeText={(next) => {
                 setText(next);
@@ -123,17 +121,17 @@ export default function Index() {
 
           <View style={styles.buttonRow}>
             <TouchableOpacity
-              style={[themeStyles.buttonGhost, styles.buttonBase]}
+              style={[theme.styles.buttonGhost, styles.buttonBase]}
               onPress={handleClear}
               activeOpacity={0.7}
             >
-              <DeleteIcon size={18} color={colors.text.secondary} />
+              <DeleteIcon size={18} color={theme.colors.text.secondary} />
               <Text style={styles.buttonLabel}>Clear</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[
-                themeStyles.buttonPrimary,
+                theme.styles.buttonPrimary,
                 styles.buttonBase,
                 saveState.kind === 'saving' && styles.buttonDisabled,
               ]}
@@ -141,7 +139,7 @@ export default function Index() {
               disabled={saveState.kind === 'saving'}
               activeOpacity={0.7}
             >
-              <NewEntryIcon size={18} color={colors.background.app} />
+              <NewEntryIcon size={18} color={theme.colors.text.inverse} />
               <Text style={[styles.buttonLabel, styles.buttonLabelSave]}>
                 {saveState.kind === 'saving' ? 'Saving…' : 'Save'}
               </Text>
@@ -153,86 +151,88 @@ export default function Index() {
   );
 }
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  scroll: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    padding: spacing.lg,
-  },
-  cardOverlay: {
-    backgroundColor: 'rgba(19, 16, 9, 0.75)',
-  },
-  prompt: {
-    ...typography.h2,
-    marginBottom: spacing.md,
-    fontStyle: 'italic',
-    color: colors.gold.bronze,
-  },
-  titleInput: {
-    ...typography.h3,
-    color: colors.text.primary,
-    borderBottomWidth: 0.5,
-    borderBottomColor: colors.border.subtle,
-    paddingVertical: spacing.xs,
-    marginBottom: spacing.md,
-    backgroundColor: 'transparent',
-  },
-  linedContainer: {
-    position: 'relative',
-    height: LINE_HEIGHT * LINE_COUNT,
-  },
-  line: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 0.5,
-    backgroundColor: colors.border.subtle,
-  },
-  input: {
-    ...typography.body,
-    lineHeight: LINE_HEIGHT,
-    color: colors.text.primary,
-    height: LINE_HEIGHT * LINE_COUNT,
-    paddingTop: 0,
-    paddingHorizontal: 0,
-    backgroundColor: 'transparent',
-  },
-  status: {
-    minHeight: 22,
-    marginTop: spacing.sm,
-  },
-  statusSaved: {
-    ...typography.bodySmall,
-    color: colors.semantic.success,
-  },
-  statusError: {
-    ...typography.bodySmall,
-    color: colors.semantic.error,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  buttonBase: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: spacing.xs,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonLabel: {
-    ...typography.label,
-    color: colors.text.secondary,
-  },
-  buttonLabelSave: {
-    color: colors.background.app,
-  },
-});
+function makeStyles({ mode, colors, spacing, typography }: Theme) {
+  return StyleSheet.create({
+    background: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+    },
+    scroll: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      padding: spacing.lg,
+    },
+    cardOverlay: {
+      backgroundColor: getCardOverlayColor(mode),
+    },
+    prompt: {
+      ...typography.h2,
+      marginBottom: spacing.md,
+      fontStyle: 'italic',
+      color: colors.gold.bronze,
+    },
+    titleInput: {
+      ...typography.h3,
+      color: colors.text.primary,
+      borderBottomWidth: 0.5,
+      borderBottomColor: colors.border.subtle,
+      paddingVertical: spacing.xs,
+      marginBottom: spacing.md,
+      backgroundColor: 'transparent',
+    },
+    linedContainer: {
+      position: 'relative',
+      height: LINE_HEIGHT * LINE_COUNT,
+    },
+    line: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      height: 0.5,
+      backgroundColor: colors.border.subtle,
+    },
+    input: {
+      ...typography.body,
+      lineHeight: LINE_HEIGHT,
+      color: colors.text.primary,
+      height: LINE_HEIGHT * LINE_COUNT,
+      paddingTop: 0,
+      paddingHorizontal: 0,
+      backgroundColor: 'transparent',
+    },
+    status: {
+      minHeight: 22,
+      marginTop: spacing.sm,
+    },
+    statusSaved: {
+      ...typography.bodySmall,
+      color: colors.semantic.success,
+    },
+    statusError: {
+      ...typography.bodySmall,
+      color: colors.semantic.error,
+    },
+    buttonRow: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+      marginTop: spacing.sm,
+    },
+    buttonBase: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: spacing.xs,
+    },
+    buttonDisabled: {
+      opacity: 0.6,
+    },
+    buttonLabel: {
+      ...typography.label,
+      color: colors.text.secondary,
+    },
+    buttonLabelSave: {
+      color: colors.text.inverse,
+    },
+  });
+}

@@ -1,25 +1,12 @@
-import { ImageBackground, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { useMemo } from 'react';
+import { ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
 import { AppText as Text } from '../../components/AppText';
-import { colors, spacing, styles as themeStyles, typography } from '../../styles/theme';
-
-const cardSource = Platform.OS === 'web'
-  ? require('../../assets/cards/card-w10-cracked@web.png')
-  : require('../../assets/cards/card-w10-cracked.png');
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {children}
-    </View>
-  );
-}
-
-function Divider() {
-  return <View style={themeStyles.divider} />;
-}
+import { getCardSource, useTheme, type Theme } from '../../styles/theme';
 
 export default function AboutScreen() {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const cardSource = getCardSource('cracked', theme.mode);
   return (
     <ImageBackground
       source={cardSource}
@@ -35,15 +22,16 @@ export default function AboutScreen() {
           <Text style={styles.lead}>
             Your mind is an oracle. Not the kind that speaks in riddles—the kind that speaks only when you listen.
           </Text>
-          <Text style={[styles.body, { marginTop: spacing.sm }]}>
+          <Text style={[styles.body, { marginTop: theme.spacing.sm }]}>
             Every day, you carry thoughts too large for ordinary conversation. Moments that shift your understanding. Feelings that circle back, like serpents coiling in dark waves. Patterns you sense but cannot name. This app is where those thoughts find form.
           </Text>
         </View>
 
-        <Divider />
+        <View style={theme.styles.divider} />
 
         {/* Why Laocoon */}
-        <Section title="Why Laocoon?">
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Why Laocoon?</Text>
           <Text style={styles.body}>
             In ancient Troy, there lived a priest named Laocoon. He was given a terrible gift: the sight of what was coming. He saw the wooden horse. He understood the danger. He tried to warn his people—
             <Text style={styles.italic}>do not bring this inside the walls</Text>
@@ -61,12 +49,13 @@ export default function AboutScreen() {
             <Text style={styles.italic}>yourself</Text>—clearly, consistently, across time.  That you'll know what you know. That you'll understand the shape of your own mind.
           </Text>
           <Text style={styles.body}>Laocoon could not save Troy. But he could know the truth. That knowing—that clarity—is what we offer you.</Text>
-        </Section>
+        </View>
 
-        <Divider />
+        <View style={theme.styles.divider} />
 
         {/* What This Is */}
-        <Section title="What This Is">
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>What This Is</Text>
           <Text style={styles.body}>
             A sacred space to write what matters. Each day, you record your thoughts—your mood, your understanding of yourself, the small clarities and large confusions. No rules. No audience. Just the blank page and your voice.
           </Text>
@@ -78,12 +67,13 @@ export default function AboutScreen() {
             Weeks, months, years later—return to this day. Read what you wrote at this exact moment. What were you carrying then? What have you learned? What patterns repeat? What has shifted? Watch your understanding compound across seasons, like sediment forming stone.
           </Text>
           <Text style={styles.body}>The calendar is yours alone. Navigate any day, any year. See the constellation of your own becoming.</Text>
-        </Section>
+        </View>
 
-        <Divider />
+        <View style={theme.styles.divider} />
 
         {/* The Recognition */}
-        <Section title="The Recognition">
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>The Recognition</Text>
           <Text style={styles.body}>
             As you write and reflect, the app learns what lifts you. It recognizes the patterns of your positive emotions—the moments when you felt most yourself, most alive, most at peace. Not to judge. Not to prescribe. But to{' '}
             <Text style={styles.italic}>notice</Text>. To show you: this is when you flourish. This is your north star in the still Trojan night, starfielded under the  moon.
@@ -91,12 +81,13 @@ export default function AboutScreen() {
           <Text style={styles.body}>
             Over time, a map emerges. Not a self-help prescription. A mirror that remembers.
           </Text>
-        </Section>
+        </View>
 
-        <Divider />
+        <View style={theme.styles.divider} />
 
         {/* Why This Matters */}
-        <Section title="Why This Matters">
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Why This Matters</Text>
           <Text style={styles.body}>
             We live in a world of endless noise and shallow reflection. You scroll, you consume, you forget. But your interior life—your actual thoughts, your real progress, your genuine transformation—that's the only thing worth recording.
           </Text>
@@ -106,12 +97,13 @@ export default function AboutScreen() {
           <Text style={styles.body}>
             You are not trying to optimize yourself. You are trying to <Text style={styles.italic}>know</Text> yourself.
           </Text>
-        </Section>
+        </View>
 
-        <Divider />
+        <View style={theme.styles.divider} />
 
         {/* The Ritual */}
-        <Section title="The Ritual">
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>The Ritual</Text>
           <Text style={styles.body}>
             Light the torch. Open the scroll. Write what is true today.
           </Text>
@@ -124,7 +116,7 @@ export default function AboutScreen() {
           <Text style={styles.body}>
             This is how you remember who you are.
           </Text>
-        </Section>
+        </View>
 
         {/* Footer */}
         <View style={styles.footer}>
@@ -135,64 +127,66 @@ export default function AboutScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  scroll: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xxxl,
-  },
-  header: {
-    paddingBottom: spacing.lg,
-  },
-  appTitle: {
-    ...typography.overline,
-    color: colors.gold.bronze,
-    letterSpacing: 4,
-    marginBottom: spacing.xs,
-  },
-  tagline: {
-    ...typography.display,
-    color: colors.text.primary,
-    marginBottom: spacing.md,
-  },
-  lead: {
-    ...typography.body,
-    color: colors.text.primary,
-    fontStyle: 'italic',
-  },
-  section: {
-    paddingVertical: spacing.lg,
-    gap: spacing.sm,
-  },
-  sectionTitle: {
-    ...typography.h2,
-    color: colors.gold.bronze,
-    marginBottom: spacing.xs,
-  },
-  body: {
-    ...typography.body,
-    color: colors.text.secondary,
-    lineHeight: 26,
-  },
-  italic: {
-    fontStyle: 'italic',
-    color: colors.text.primary,
-  },
-  footer: {
-    marginTop: spacing.lg,
-    paddingTop: spacing.lg,
-    borderTopWidth: 0.5,
-    borderTopColor: colors.border.subtle,
-    alignItems: 'center',
-  },
-  footerText: {
-    ...typography.caption,
-    color: colors.gold.patina,
-    fontStyle: 'italic',
-    letterSpacing: 1,
-  },
-});
+function makeStyles({ colors, spacing, typography }: Theme) {
+  return StyleSheet.create({
+    background: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+    },
+    scroll: {
+      padding: spacing.lg,
+      paddingBottom: spacing.xxxl,
+    },
+    header: {
+      paddingBottom: spacing.lg,
+    },
+    appTitle: {
+      ...typography.overline,
+      color: colors.gold.bronze,
+      letterSpacing: 4,
+      marginBottom: spacing.xs,
+    },
+    tagline: {
+      ...typography.display,
+      color: colors.text.primary,
+      marginBottom: spacing.md,
+    },
+    lead: {
+      ...typography.body,
+      color: colors.text.primary,
+      fontStyle: 'italic',
+    },
+    section: {
+      paddingVertical: spacing.lg,
+      gap: spacing.sm,
+    },
+    sectionTitle: {
+      ...typography.h2,
+      color: colors.gold.bronze,
+      marginBottom: spacing.xs,
+    },
+    body: {
+      ...typography.body,
+      color: colors.text.secondary,
+      lineHeight: 26,
+    },
+    italic: {
+      fontStyle: 'italic',
+      color: colors.text.primary,
+    },
+    footer: {
+      marginTop: spacing.lg,
+      paddingTop: spacing.lg,
+      borderTopWidth: 0.5,
+      borderTopColor: colors.border.subtle,
+      alignItems: 'center',
+    },
+    footerText: {
+      ...typography.caption,
+      color: colors.gold.patina,
+      fontStyle: 'italic',
+      letterSpacing: 1,
+    },
+  });
+}

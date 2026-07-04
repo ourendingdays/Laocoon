@@ -7,9 +7,11 @@ import {
   ProfileIcon,
   SettingsIcon,
 } from '../../assets/icons';
-import { colors } from '../../styles/theme';
+import { useTheme } from '../../styles/theme';
 
 export default function TabLayout() {
+  const theme = useTheme();
+  const { colors } = theme;
   return (
     <Tabs
       screenOptions={{

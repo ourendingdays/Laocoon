@@ -1,10 +1,9 @@
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   ImageBackground,
   Modal,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -15,13 +14,12 @@ import {
 import { DeleteIcon, EditIcon } from '../../assets/icons';
 import { AppText as Text } from '../../components/AppText';
 import { deleteEntry, listEntries, updateEntry, type Entry } from '../../lib/entries';
-import { colors, radius, spacing, styles as themeStyles, typography } from '../../styles/theme';
-
-const cardSource = Platform.OS === 'web'
-  ? require('../../assets/cards/card-w5-embers@web.png')
-  : require('../../assets/cards/card-w5-embers.png');
+import { getCardOverlayColor, getCardOverlayColorStrong, getCardSource, useTheme, type Theme } from '../../styles/theme';
 
 export default function JournalScreen() {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const cardSource = getCardSource('embers', theme.mode);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -98,7 +96,7 @@ export default function JournalScreen() {
 
           {loading && (
             <View style={styles.centered}>
-              <ActivityIndicator color={colors.gold.bronze} />
+              <ActivityIndicator color={theme.colors.gold.bronze} />
             </View>
           )}
 
@@ -112,7 +110,7 @@ export default function JournalScreen() {
 
           {!loading &&
             entries.map((entry) => (
-              <View key={entry.entry_id} style={[themeStyles.card, styles.entryCard]}>
+              <View key={entry.entry_id} style={[theme.styles.card, styles.entryCard]}>
                 <Text style={styles.entryDate}>
                   {new Date(entry.created_at).toLocaleString(undefined, {
                     weekday: 'short',
@@ -133,7 +131,7 @@ export default function JournalScreen() {
                     onPress={() => openEditor(entry)}
                     activeOpacity={0.7}
                   >
-                    <EditIcon size={16} color={colors.text.secondary} />
+                    <EditIcon size={16} color={theme.colors.text.secondary} />
                     <Text style={styles.actionLabel}>Edit</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -141,8 +139,8 @@ export default function JournalScreen() {
                     onPress={() => handleDelete(entry)}
                     activeOpacity={0.7}
                   >
-                    <DeleteIcon size={16} color={colors.semantic.error} />
-                    <Text style={[styles.actionLabel, { color: colors.semantic.error }]}>
+                    <DeleteIcon size={16} color={theme.colors.semantic.error} />
+                    <Text style={[styles.actionLabel, { color: theme.colors.semantic.error }]}>
                       Delete
                     </Text>
                   </TouchableOpacity>
@@ -161,25 +159,25 @@ export default function JournalScreen() {
               value={draftTitle}
               onChangeText={setDraftTitle}
               placeholder="Title (optional)"
-              placeholderTextColor={colors.text.placeholder}
+              placeholderTextColor={theme.colors.text.placeholder}
             />
             <TextInput
               style={styles.editorInput}
               multiline
               value={draftContent}
               onChangeText={setDraftContent}
-              placeholderTextColor={colors.text.placeholder}
+              placeholderTextColor={theme.colors.text.placeholder}
             />
             <View style={styles.editorButtons}>
               <TouchableOpacity
-                style={[themeStyles.buttonGhost, styles.editorButton]}
+                style={[theme.styles.buttonGhost, styles.editorButton]}
                 onPress={closeEditor}
                 activeOpacity={0.7}
               >
                 <Text style={styles.editorButtonGhostLabel}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[themeStyles.buttonPrimary, styles.editorButton, saving && { opacity: 0.6 }]}
+                style={[theme.styles.buttonPrimary, styles.editorButton, saving && { opacity: 0.6 }]}
                 onPress={saveEdit}
                 disabled={saving}
                 activeOpacity={0.7}
@@ -194,116 +192,118 @@ export default function JournalScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  scroll: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xxxl,
-  },
-  container: {
-    backgroundColor: 'rgba(19, 16, 9, 0.75)',
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.border.subtle,
-    padding: spacing.md,
-    gap: spacing.md,
-  },
-  header: {
-    ...typography.h1,
-    marginBottom: spacing.xs,
-  },
-  centered: {
-    alignItems: 'center',
-    paddingVertical: spacing.lg,
-  },
-  error: {
-    ...typography.bodySmall,
-    color: colors.semantic.error,
-  },
-  empty: {
-    ...typography.bodySmall,
-    fontStyle: 'italic',
-  },
-  entryCard: {
-    backgroundColor: 'rgba(28, 23, 16, 0.9)',
-    gap: spacing.sm,
-  },
-  entryDate: {
-    ...typography.caption,
-  },
-  entryTitle: {
-    ...typography.h3,
-    color: colors.gold.bronze,
-  },
-  entryContent: {
-    ...typography.body,
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    marginTop: spacing.xs,
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    paddingVertical: spacing.xs,
-  },
-  actionLabel: {
-    ...typography.label,
-    color: colors.text.secondary,
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'center',
-    padding: spacing.lg,
-  },
-  editorCard: {
-    backgroundColor: colors.background.charcoal,
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.border.default,
-    padding: spacing.md,
-    gap: spacing.sm,
-  },
-  editorTitle: {
-    ...typography.h2,
-  },
-  editorTitleInput: {
-    ...typography.h3,
-    backgroundColor: colors.background.pitch,
-    borderRadius: radius.md,
-    padding: spacing.sm,
-    color: colors.text.primary,
-  },
-  editorInput: {
-    ...typography.body,
-    minHeight: 180,
-    textAlignVertical: 'top',
-    backgroundColor: colors.background.pitch,
-    borderRadius: radius.md,
-    padding: spacing.sm,
-    color: colors.text.primary,
-  },
-  editorButtons: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  editorButton: {
-    flex: 1,
-  },
-  editorButtonGhostLabel: {
-    ...typography.label,
-    color: colors.text.secondary,
-  },
-  editorButtonPrimaryLabel: {
-    ...typography.label,
-    color: colors.text.inverse,
-  },
-});
+function makeStyles({ mode, colors, spacing, radius, typography }: Theme) {
+  return StyleSheet.create({
+    background: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+    },
+    scroll: {
+      padding: spacing.lg,
+      paddingBottom: spacing.xxxl,
+    },
+    container: {
+      backgroundColor: getCardOverlayColor(mode),
+      borderRadius: radius.lg,
+      borderWidth: 0.5,
+      borderColor: colors.border.subtle,
+      padding: spacing.md,
+      gap: spacing.md,
+    },
+    header: {
+      ...typography.h1,
+      marginBottom: spacing.xs,
+    },
+    centered: {
+      alignItems: 'center',
+      paddingVertical: spacing.lg,
+    },
+    error: {
+      ...typography.bodySmall,
+      color: colors.semantic.error,
+    },
+    empty: {
+      ...typography.bodySmall,
+      fontStyle: 'italic',
+    },
+    entryCard: {
+      backgroundColor: getCardOverlayColorStrong(mode),
+      gap: spacing.sm,
+    },
+    entryDate: {
+      ...typography.caption,
+    },
+    entryTitle: {
+      ...typography.h3,
+      color: colors.gold.bronze,
+    },
+    entryContent: {
+      ...typography.body,
+    },
+    actions: {
+      flexDirection: 'row',
+      gap: spacing.md,
+      marginTop: spacing.xs,
+    },
+    actionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.xs,
+      paddingVertical: spacing.xs,
+    },
+    actionLabel: {
+      ...typography.label,
+      color: colors.text.secondary,
+    },
+    modalBackdrop: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.7)',
+      justifyContent: 'center',
+      padding: spacing.lg,
+    },
+    editorCard: {
+      backgroundColor: colors.background.charcoal,
+      borderRadius: radius.lg,
+      borderWidth: 0.5,
+      borderColor: colors.border.default,
+      padding: spacing.md,
+      gap: spacing.sm,
+    },
+    editorTitle: {
+      ...typography.h2,
+    },
+    editorTitleInput: {
+      ...typography.h3,
+      backgroundColor: colors.background.pitch,
+      borderRadius: radius.md,
+      padding: spacing.sm,
+      color: colors.text.primary,
+    },
+    editorInput: {
+      ...typography.body,
+      minHeight: 180,
+      textAlignVertical: 'top',
+      backgroundColor: colors.background.pitch,
+      borderRadius: radius.md,
+      padding: spacing.sm,
+      color: colors.text.primary,
+    },
+    editorButtons: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+      marginTop: spacing.xs,
+    },
+    editorButton: {
+      flex: 1,
+    },
+    editorButtonGhostLabel: {
+      ...typography.label,
+      color: colors.text.secondary,
+    },
+    editorButtonPrimaryLabel: {
+      ...typography.label,
+      color: colors.text.inverse,
+    },
+  });
+}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ImageBackground,
   Platform,
@@ -11,11 +11,7 @@ import { AppText as Text } from '../../components/AppText';
 import { listEntries } from '../../lib/entries';
 import { useSession } from '../../lib/session';
 import { supabase } from '../../lib/supabase';
-import { colors, radius, spacing, styles as themeStyles, typography } from '../../styles/theme';
-
-const cardSource = Platform.OS === 'web'
-  ? require('../../assets/cards/card-w7-starchart@web.png')
-  : require('../../assets/cards/card-w7-starchart.png');
+import { getCardOverlayColor, getCardSource, useTheme, type Theme } from '../../styles/theme';
 
 function downloadWebFile(filename: string, contents: string) {
   const blob = new Blob([contents], { type: 'application/json' });
@@ -28,6 +24,9 @@ function downloadWebFile(filename: string, contents: string) {
 }
 
 export default function ProfileScreen() {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const cardSource = getCardSource('starchart', theme.mode);
   const { user } = useSession();
   const [busy, setBusy] = useState<null | 'export' | 'delete' | 'signout'>(null);
   const [message, setMessage] = useState<{ kind: 'info' | 'error'; text: string } | null>(null);
@@ -124,7 +123,7 @@ export default function ProfileScreen() {
           )}
 
           <TouchableOpacity
-            style={[themeStyles.buttonPrimary, busy && styles.disabled]}
+            style={[theme.styles.buttonPrimary, busy && styles.disabled]}
             onPress={handleSignOut}
             disabled={!!busy}
             activeOpacity={0.7}
@@ -138,7 +137,7 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>Your data</Text>
 
           <TouchableOpacity
-            style={[themeStyles.buttonGhost, busy && styles.disabled]}
+            style={[theme.styles.buttonGhost, busy && styles.disabled]}
             onPress={handleExport}
             disabled={!!busy}
             activeOpacity={0.7}
@@ -164,74 +163,76 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  scroll: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xxxl,
-  },
-  container: {
-    backgroundColor: 'rgba(19, 16, 9, 0.75)',
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.border.subtle,
-    padding: spacing.md,
-    gap: spacing.md,
-  },
-  header: {
-    ...typography.h1,
-  },
-  field: {
-    gap: spacing.xs,
-  },
-  fieldLabel: {
-    ...typography.overline,
-  },
-  fieldValue: {
-    ...typography.body,
-  },
-  sectionTitle: {
-    ...typography.h3,
-    color: colors.gold.bronze,
-  },
-  divider: {
-    ...themeStyles.divider,
-    marginVertical: spacing.sm,
-  },
-  primaryLabel: {
-    ...typography.label,
-    color: colors.text.inverse,
-  },
-  ghostLabel: {
-    ...typography.label,
-    color: colors.gold.bronze,
-  },
-  danger: {
-    backgroundColor: 'transparent',
-    borderRadius: radius.md,
-    borderWidth: 0.5,
-    borderColor: colors.semantic.error,
-    paddingVertical: spacing.sm + 4,
-    paddingHorizontal: spacing.lg,
-    alignItems: 'center',
-  },
-  dangerLabel: {
-    ...typography.label,
-    color: colors.semantic.error,
-  },
-  disabled: {
-    opacity: 0.6,
-  },
-  info: {
-    ...typography.bodySmall,
-    color: colors.semantic.success,
-  },
-  error: {
-    ...typography.bodySmall,
-    color: colors.semantic.error,
-  },
-});
+function makeStyles({ mode, colors, spacing, radius, typography, styles: themeStyles }: Theme) {
+  return StyleSheet.create({
+    background: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+    },
+    scroll: {
+      padding: spacing.lg,
+      paddingBottom: spacing.xxxl,
+    },
+    container: {
+      backgroundColor: getCardOverlayColor(mode),
+      borderRadius: radius.lg,
+      borderWidth: 0.5,
+      borderColor: colors.border.subtle,
+      padding: spacing.md,
+      gap: spacing.md,
+    },
+    header: {
+      ...typography.h1,
+    },
+    field: {
+      gap: spacing.xs,
+    },
+    fieldLabel: {
+      ...typography.overline,
+    },
+    fieldValue: {
+      ...typography.body,
+    },
+    sectionTitle: {
+      ...typography.h3,
+      color: colors.gold.bronze,
+    },
+    divider: {
+      ...themeStyles.divider,
+      marginVertical: spacing.sm,
+    },
+    primaryLabel: {
+      ...typography.label,
+      color: colors.text.inverse,
+    },
+    ghostLabel: {
+      ...typography.label,
+      color: colors.gold.bronze,
+    },
+    danger: {
+      backgroundColor: 'transparent',
+      borderRadius: radius.md,
+      borderWidth: 0.5,
+      borderColor: colors.semantic.error,
+      paddingVertical: spacing.sm + 4,
+      paddingHorizontal: spacing.lg,
+      alignItems: 'center',
+    },
+    dangerLabel: {
+      ...typography.label,
+      color: colors.semantic.error,
+    },
+    disabled: {
+      opacity: 0.6,
+    },
+    info: {
+      ...typography.bodySmall,
+      color: colors.semantic.success,
+    },
+    error: {
+      ...typography.bodySmall,
+      color: colors.semantic.error,
+    },
+  });
+}

@@ -1,11 +1,13 @@
 import { Link, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { AppText as Text } from '../../components/AppText';
 import { supabase } from '../../lib/supabase';
-import { colors, spacing, styles as themeStyles, typography } from '../../styles/theme';
+import { useTheme, type Theme } from '../../styles/theme';
 
 export default function SignInScreen() {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,32 +34,32 @@ export default function SignInScreen() {
 
         <Text style={styles.label}>Email</Text>
         <TextInput
-          style={themeStyles.input}
+          style={theme.styles.input}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           autoComplete="email"
           keyboardType="email-address"
           placeholder="you@example.com"
-          placeholderTextColor={colors.text.placeholder}
+          placeholderTextColor={theme.colors.text.placeholder}
         />
 
         <Text style={styles.label}>Password</Text>
         <TextInput
-          style={themeStyles.input}
+          style={theme.styles.input}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
           autoCapitalize="none"
           autoComplete="current-password"
           placeholder="••••••••"
-          placeholderTextColor={colors.text.placeholder}
+          placeholderTextColor={theme.colors.text.placeholder}
         />
 
         {error && <Text style={styles.error}>{error}</Text>}
 
         <TouchableOpacity
-          style={[themeStyles.buttonPrimary, loading && styles.buttonDisabled]}
+          style={[theme.styles.buttonPrimary, loading && styles.buttonDisabled]}
           onPress={handleSignIn}
           disabled={loading}
           activeOpacity={0.7}
@@ -76,52 +78,54 @@ export default function SignInScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    ...themeStyles.screen,
-    padding: spacing.lg,
-    justifyContent: 'center',
-  },
-  card: {
-    ...themeStyles.card,
-    gap: spacing.sm,
-  },
-  title: {
-    ...typography.h1,
-    marginBottom: spacing.xs,
-  },
-  subtitle: {
-    ...typography.bodySmall,
-    marginBottom: spacing.md,
-  },
-  label: {
-    ...typography.overline,
-    marginTop: spacing.sm,
-  },
-  error: {
-    ...typography.bodySmall,
-    color: colors.semantic.error,
-    marginTop: spacing.xs,
-  },
-  primaryLabel: {
-    ...typography.label,
-    color: colors.text.inverse,
-  },
-  buttonDisabled: {
-    opacity: 0.5,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: spacing.xs,
-    marginTop: spacing.md,
-  },
-  footerText: {
-    ...typography.bodySmall,
-  },
-  link: {
-    ...typography.bodySmall,
-    color: colors.gold.bronze,
-    fontWeight: '500',
-  },
-});
+function makeStyles({ colors, spacing, typography, styles: themeStyles }: Theme) {
+  return StyleSheet.create({
+    screen: {
+      ...themeStyles.screen,
+      padding: spacing.lg,
+      justifyContent: 'center',
+    },
+    card: {
+      ...themeStyles.card,
+      gap: spacing.sm,
+    },
+    title: {
+      ...typography.h1,
+      marginBottom: spacing.xs,
+    },
+    subtitle: {
+      ...typography.bodySmall,
+      marginBottom: spacing.md,
+    },
+    label: {
+      ...typography.overline,
+      marginTop: spacing.sm,
+    },
+    error: {
+      ...typography.bodySmall,
+      color: colors.semantic.error,
+      marginTop: spacing.xs,
+    },
+    primaryLabel: {
+      ...typography.label,
+      color: colors.text.inverse,
+    },
+    buttonDisabled: {
+      opacity: 0.5,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: spacing.xs,
+      marginTop: spacing.md,
+    },
+    footerText: {
+      ...typography.bodySmall,
+    },
+    link: {
+      ...typography.bodySmall,
+      color: colors.gold.bronze,
+      fontWeight: '500',
+    },
+  });
+}

@@ -6,7 +6,13 @@
  *   import { colors, typography, spacing, shadows } from './theme';
  *   <View style={{ backgroundColor: colors.background.app }} />
  *   <Text style={{ color: colors.text.primary, ...typography.body }} />
+ *
+ * For theme-aware components, import { useTheme } and derive styles per-render.
  */
+
+import { Platform, useColorScheme } from 'react-native';
+import { usePreferences } from '../lib/preferences';
+import * as light from './themeLight';
 
 // ─────────────────────────────────────────────
 // COLOURS
@@ -332,3 +338,138 @@ export const styles = {
 export type ColorKeys    = keyof typeof colors;
 export type SpacingKeys  = keyof typeof spacing;
 export type RadiusKeys   = keyof typeof radius;
+
+// ─────────────────────────────────────────────
+// THEME BUNDLES — dark + light selectable at runtime
+// ─────────────────────────────────────────────
+
+export type ThemeMode = 'dark' | 'light';
+
+const _darkTheme = {
+  mode: 'dark' as const,
+  colors,
+  typography,
+  spacing,
+  radius,
+  shadows,
+  iconSize,
+  duration,
+  styles,
+};
+
+const _lightTheme = {
+  mode: 'light' as const,
+  colors: light.colors,
+  typography: light.typography,
+  spacing: light.spacing,
+  radius: light.radius,
+  shadows: light.shadows,
+  iconSize: light.iconSize,
+  duration: light.duration,
+  styles: light.styles,
+};
+
+export type Theme = typeof _darkTheme | typeof _lightTheme;
+
+export const darkTheme: Theme = _darkTheme;
+export const lightTheme: Theme = _lightTheme;
+
+export function useTheme(): Theme {
+  const { preferences } = usePreferences();
+  const systemScheme = useColorScheme();
+  const resolved: ThemeMode =
+    preferences.theme === 'system'
+      ? (systemScheme === 'light' ? 'light' : 'dark')
+      : preferences.theme;
+  return resolved === 'light' ? lightTheme : darkTheme;
+}
+
+// ─────────────────────────────────────────────
+// CARD ASSET REGISTRY
+// ─────────────────────────────────────────────
+
+export type CardName = 'frieze' | 'starchart' | 'embers' | 'papyrus' | 'cracked' | 'marble';
+
+type CardVariants = { native: number; web: number };
+type CardEntry = { dark: CardVariants; light: CardVariants };
+
+const CARD_ASSETS: Record<CardName, CardEntry> = {
+  frieze: {
+    dark: {
+      native: require('../assets/cards/card-w9-frieze.png'),
+      web: require('../assets/cards/card-w9-frieze@web.png'),
+    },
+    light: {
+      native: require('../assets/cards-light/card-w9-frieze-light.png'),
+      web: require('../assets/cards-light/card-w9-frieze-light@web.png'),
+    },
+  },
+  starchart: {
+    dark: {
+      native: require('../assets/cards/card-w7-starchart.png'),
+      web: require('../assets/cards/card-w7-starchart@web.png'),
+    },
+    light: {
+      native: require('../assets/cards-light/card-w7-starchart-light.png'),
+      web: require('../assets/cards-light/card-w7-starchart-light@web.png'),
+    },
+  },
+  embers: {
+    dark: {
+      native: require('../assets/cards/card-w5-embers.png'),
+      web: require('../assets/cards/card-w5-embers@web.png'),
+    },
+    light: {
+      native: require('../assets/cards-light/card-w5-embers-light.png'),
+      web: require('../assets/cards-light/card-w5-embers-light@web.png'),
+    },
+  },
+  papyrus: {
+    dark: {
+      native: require('../assets/cards/card-w4-papyrus.png'),
+      web: require('../assets/cards/card-w4-papyrus@web.png'),
+    },
+    light: {
+      native: require('../assets/cards-light/card-w4-papyrus-light.png'),
+      web: require('../assets/cards-light/card-w4-papyrus-light@web.png'),
+    },
+  },
+  cracked: {
+    dark: {
+      native: require('../assets/cards/card-w10-cracked.png'),
+      web: require('../assets/cards/card-w10-cracked@web.png'),
+    },
+    light: {
+      native: require('../assets/cards-light/card-w10-cracked-light.png'),
+      web: require('../assets/cards-light/card-w10-cracked-light@web.png'),
+    },
+  },
+  marble: {
+    dark: {
+      native: require('../assets/cards/card-w11-marble.png'),
+      web: require('../assets/cards/card-w11-marble@web.png'),
+    },
+    light: {
+      native: require('../assets/cards-light/card-w11-marble-light.png'),
+      web: require('../assets/cards-light/card-w11-marble-light@web.png'),
+    },
+  },
+};
+
+export function getCardSource(name: CardName, mode: ThemeMode): number {
+  const variants = CARD_ASSETS[name][mode];
+  return Platform.OS === 'web' ? variants.web : variants.native;
+}
+
+// ─────────────────────────────────────────────
+// CARD OVERLAY TINT
+// A semi-transparent tint that goes over the ImageBackground so text stays legible.
+// ─────────────────────────────────────────────
+
+export function getCardOverlayColor(mode: ThemeMode): string {
+  return mode === 'light' ? 'rgba(250, 245, 234, 0.75)' : 'rgba(19, 16, 9, 0.75)';
+}
+
+export function getCardOverlayColorStrong(mode: ThemeMode): string {
+  return mode === 'light' ? 'rgba(239, 228, 208, 0.92)' : 'rgba(28, 23, 16, 0.9)';
+}

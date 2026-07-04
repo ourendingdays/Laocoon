@@ -3,9 +3,10 @@ import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { PreferencesProvider } from '../lib/preferences';
 import { SessionProvider, useSession } from '../lib/session';
-import { colors, styles as themeStyles } from '../styles/theme';
+import { useTheme } from '../styles/theme';
 
 function AuthGate({ children }: { children: React.ReactNode }) {
+  const theme = useTheme();
   const { session, loading } = useSession();
   const segments = useSegments();
   const router = useRouter();
@@ -22,8 +23,8 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <View style={[themeStyles.screen, themeStyles.screenCentered]}>
-        <ActivityIndicator color={colors.gold.bronze} />
+      <View style={[theme.styles.screen, theme.styles.screenCentered]}>
+        <ActivityIndicator color={theme.colors.gold.bronze} />
       </View>
     );
   }

@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ImageBackground,
   Modal,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -13,11 +12,7 @@ import {
 import { AppText as Text } from '../../components/AppText';
 import { listEntries, type Entry } from '../../lib/entries';
 import { usePreferences } from '../../lib/preferences';
-import { colors, radius, spacing, styles as themeStyles, typography } from '../../styles/theme';
-
-const cardSource = Platform.OS === 'web'
-  ? require('../../assets/cards/card-w11-marble@web.png')
-  : require('../../assets/cards/card-w11-marble.png');
+import { getCardOverlayColor, getCardOverlayColorStrong, getCardSource, useTheme, type Theme } from '../../styles/theme';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -66,6 +61,9 @@ const MONTH_NAMES = [
 ];
 
 export default function CalendarScreen() {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const cardSource = getCardSource('marble', theme.mode);
   const { preferences } = usePreferences();
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -281,7 +279,7 @@ export default function CalendarScreen() {
 
               {/* Entry preview card */}
               {selectedEntry && (
-                <View style={[themeStyles.card, styles.entryCard]}>
+                <View style={[theme.styles.card, styles.entryCard]}>
                   <Text style={styles.entryDate}>
                     {new Date(selectedEntry.dateStr + 'T00:00:00').toLocaleDateString('en-US', {
                       weekday: 'long',
@@ -387,275 +385,278 @@ export default function CalendarScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  scroll: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    padding: spacing.lg,
-  },
-  container: {
-    backgroundColor: 'rgba(19, 16, 9, 0.75)',
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.border.subtle,
-    padding: spacing.md,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  navButton: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.sm + 4,
-    borderWidth: 0.5,
-    borderColor: colors.border.default,
-    borderRadius: radius.md,
-  },
-  navButtonText: {
-    ...typography.label,
-    color: colors.text.secondary,
-  },
-  monthYear: {
-    ...typography.h2,
-    flex: 1,
-    textAlign: 'center',
-  },
-  weekdayRow: {
-    flexDirection: 'row',
-    marginBottom: spacing.sm,
-  },
-  weekdayCell: {
-    width: '14.285714%',
-    alignItems: 'center',
-    paddingVertical: spacing.xs,
-  },
-  weekdayText: {
-    ...typography.overline,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: spacing.md,
-  },
-  dayCell: {
-    width: '14.285714%',
-    aspectRatio: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 2,
-  },
-  dayCellOther: {
-    opacity: 0.3,
-  },
-  dayCellCurrent: {
-    // default — no extra style needed
-  },
-  dayCellEntry: {
-    backgroundColor: 'rgba(201, 169, 110, 0.15)',
-    borderWidth: 0.5,
-    borderColor: colors.border.gold,
-    borderRadius: radius.sm,
-    opacity: 1,
-  },
-  dayText: {
-    ...typography.bodySmall,
-    color: colors.text.secondary,
-    lineHeight: undefined,
-  },
-  dayTextOther: {
-    color: colors.text.placeholder,
-  },
-  dayTextEntry: {
-    color: colors.text.primary,
-    fontWeight: '600',
-  },
-  entryCountBadge: {
-    position: 'absolute',
-    top: 3,
-    right: 3,
-    minWidth: 16,
-    height: 16,
-    paddingHorizontal: 4,
-    borderRadius: radius.full,
-    backgroundColor: colors.gold.bronze,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  entryCountText: {
-    color: colors.background.app,
-    fontSize: 10,
-    lineHeight: 12,
-    fontWeight: '700',
-  },
-  entryCard: {
-    backgroundColor: 'rgba(28, 23, 16, 0.9)',
-    marginTop: spacing.sm,
-  },
-  entryDate: {
-    ...typography.caption,
-    marginBottom: spacing.sm,
-  },
-  entryText: {
-    ...typography.body,
-  },
-  monthYearButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.xs,
-  },
-  monthYearCaret: {
-    ...typography.label,
-    color: colors.text.placeholder,
-  },
-  // Modal / picker
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.lg,
-  },
-  pickerCard: {
-    backgroundColor: colors.background.charcoal,
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.border.default,
-    padding: spacing.md,
-    width: '100%',
-    maxWidth: 320,
-  },
-  pickerYearRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.md,
-  },
-  pickerArrow: {
-    padding: spacing.sm,
-  },
-  pickerArrowText: {
-    fontSize: 24,
-    color: colors.text.secondary,
-    lineHeight: 28,
-  },
-  pickerYearText: {
-    ...typography.h1,
-  },
-  pickerMonthGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  pickerMonthCell: {
-    width: '25%',
-    paddingVertical: spacing.sm + 2,
-    alignItems: 'center',
-    borderRadius: radius.sm,
-  },
-  pickerMonthCellSelected: {
-    backgroundColor: colors.gold.bronze,
-  },
-  pickerMonthText: {
-    ...typography.label,
-    color: colors.text.secondary,
-  },
-  pickerMonthTextSelected: {
-    color: colors.background.app,
-  },
-  // View toggle
-  toggle: {
-    flexDirection: 'row',
-    borderWidth: 0.5,
-    borderColor: colors.border.default,
-    borderRadius: radius.full,
-    padding: 3,
-    marginBottom: spacing.md,
-    gap: 3,
-  },
-  toggleButton: {
-    flex: 1,
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-    borderRadius: radius.full,
-  },
-  toggleButtonActive: {
-    backgroundColor: 'rgba(201, 169, 110, 0.15)',
-    borderWidth: 0.5,
-    borderColor: colors.border.gold,
-  },
-  toggleText: {
-    ...typography.label,
-    color: colors.text.secondary,
-  },
-  toggleTextActive: {
-    color: colors.gold.bronze,
-    fontWeight: '600',
-  },
-  // "On this day" year cards
-  yearsList: {
-    gap: spacing.md,
-  },
-  yearCard: {
-    backgroundColor: 'rgba(28, 23, 16, 0.9)',
-    borderRadius: radius.lg,
-    borderWidth: 0.5,
-    borderColor: colors.border.gold,
-    padding: spacing.md,
-  },
-  yearCardEmpty: {
-    backgroundColor: 'transparent',
-    borderStyle: 'dashed',
-    borderColor: colors.border.subtle,
-  },
-  yearHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-  },
-  yearLabel: {
-    ...typography.h2,
-    color: colors.gold.bronze,
-  },
-  yearsAgoLabel: {
-    ...typography.caption,
-    color: colors.text.placeholder,
-  },
-  yearDivider: {
-    height: 0.5,
-    backgroundColor: colors.border.subtle,
-    marginVertical: spacing.sm,
-  },
-  yearDividerDashed: {
-    height: 0,
-    borderTopWidth: 0.5,
-    borderTopColor: colors.border.subtle,
-    borderStyle: 'dashed',
-    backgroundColor: 'transparent',
-  },
-  yearEmptyText: {
-    ...typography.bodySmall,
-    fontStyle: 'italic',
-    color: colors.text.placeholder,
-  },
-  yearEntryTitle: {
-    ...typography.h3,
-    color: colors.gold.bronze,
-    marginBottom: spacing.xs,
-  },
-  yearEntryContent: {
-    ...typography.body,
-  },
-  entryDivider: {
-    height: 0.5,
-    backgroundColor: colors.border.subtle,
-    marginVertical: spacing.sm,
-  },
-});
+function makeStyles({ mode, colors, spacing, radius, typography }: Theme) {
+  const activeTint = mode === 'light' ? 'rgba(138, 106, 53, 0.12)' : 'rgba(201, 169, 110, 0.15)';
+  return StyleSheet.create({
+    background: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+    },
+    scroll: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      padding: spacing.lg,
+    },
+    container: {
+      backgroundColor: getCardOverlayColor(mode),
+      borderRadius: radius.lg,
+      borderWidth: 0.5,
+      borderColor: colors.border.subtle,
+      padding: spacing.md,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: spacing.lg,
+    },
+    navButton: {
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.sm + 4,
+      borderWidth: 0.5,
+      borderColor: colors.border.default,
+      borderRadius: radius.md,
+    },
+    navButtonText: {
+      ...typography.label,
+      color: colors.text.secondary,
+    },
+    monthYear: {
+      ...typography.h2,
+      flex: 1,
+      textAlign: 'center',
+    },
+    weekdayRow: {
+      flexDirection: 'row',
+      marginBottom: spacing.sm,
+    },
+    weekdayCell: {
+      width: '14.285714%',
+      alignItems: 'center',
+      paddingVertical: spacing.xs,
+    },
+    weekdayText: {
+      ...typography.overline,
+    },
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: spacing.md,
+    },
+    dayCell: {
+      width: '14.285714%',
+      aspectRatio: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 2,
+    },
+    dayCellOther: {
+      opacity: 0.3,
+    },
+    dayCellCurrent: {
+      // default — no extra style needed
+    },
+    dayCellEntry: {
+      backgroundColor: activeTint,
+      borderWidth: 0.5,
+      borderColor: colors.border.gold,
+      borderRadius: radius.sm,
+      opacity: 1,
+    },
+    dayText: {
+      ...typography.bodySmall,
+      color: colors.text.secondary,
+      lineHeight: undefined,
+    },
+    dayTextOther: {
+      color: colors.text.placeholder,
+    },
+    dayTextEntry: {
+      color: colors.text.primary,
+      fontWeight: '600',
+    },
+    entryCountBadge: {
+      position: 'absolute',
+      top: 3,
+      right: 3,
+      minWidth: 16,
+      height: 16,
+      paddingHorizontal: 4,
+      borderRadius: radius.full,
+      backgroundColor: colors.gold.bronze,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    entryCountText: {
+      color: colors.text.inverse,
+      fontSize: 10,
+      lineHeight: 12,
+      fontWeight: '700',
+    },
+    entryCard: {
+      backgroundColor: getCardOverlayColorStrong(mode),
+      marginTop: spacing.sm,
+    },
+    entryDate: {
+      ...typography.caption,
+      marginBottom: spacing.sm,
+    },
+    entryText: {
+      ...typography.body,
+    },
+    monthYearButton: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacing.xs,
+    },
+    monthYearCaret: {
+      ...typography.label,
+      color: colors.text.placeholder,
+    },
+    // Modal / picker
+    modalBackdrop: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.6)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: spacing.lg,
+    },
+    pickerCard: {
+      backgroundColor: colors.background.charcoal,
+      borderRadius: radius.lg,
+      borderWidth: 0.5,
+      borderColor: colors.border.default,
+      padding: spacing.md,
+      width: '100%',
+      maxWidth: 320,
+    },
+    pickerYearRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: spacing.md,
+    },
+    pickerArrow: {
+      padding: spacing.sm,
+    },
+    pickerArrowText: {
+      fontSize: 24,
+      color: colors.text.secondary,
+      lineHeight: 28,
+    },
+    pickerYearText: {
+      ...typography.h1,
+    },
+    pickerMonthGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+    },
+    pickerMonthCell: {
+      width: '25%',
+      paddingVertical: spacing.sm + 2,
+      alignItems: 'center',
+      borderRadius: radius.sm,
+    },
+    pickerMonthCellSelected: {
+      backgroundColor: colors.gold.bronze,
+    },
+    pickerMonthText: {
+      ...typography.label,
+      color: colors.text.secondary,
+    },
+    pickerMonthTextSelected: {
+      color: colors.text.inverse,
+    },
+    // View toggle
+    toggle: {
+      flexDirection: 'row',
+      borderWidth: 0.5,
+      borderColor: colors.border.default,
+      borderRadius: radius.full,
+      padding: 3,
+      marginBottom: spacing.md,
+      gap: 3,
+    },
+    toggleButton: {
+      flex: 1,
+      paddingVertical: spacing.sm,
+      alignItems: 'center',
+      borderRadius: radius.full,
+    },
+    toggleButtonActive: {
+      backgroundColor: activeTint,
+      borderWidth: 0.5,
+      borderColor: colors.border.gold,
+    },
+    toggleText: {
+      ...typography.label,
+      color: colors.text.secondary,
+    },
+    toggleTextActive: {
+      color: colors.gold.bronze,
+      fontWeight: '600',
+    },
+    // "On this day" year cards
+    yearsList: {
+      gap: spacing.md,
+    },
+    yearCard: {
+      backgroundColor: getCardOverlayColorStrong(mode),
+      borderRadius: radius.lg,
+      borderWidth: 0.5,
+      borderColor: colors.border.gold,
+      padding: spacing.md,
+    },
+    yearCardEmpty: {
+      backgroundColor: 'transparent',
+      borderStyle: 'dashed',
+      borderColor: colors.border.subtle,
+    },
+    yearHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'baseline',
+    },
+    yearLabel: {
+      ...typography.h2,
+      color: colors.gold.bronze,
+    },
+    yearsAgoLabel: {
+      ...typography.caption,
+      color: colors.text.placeholder,
+    },
+    yearDivider: {
+      height: 0.5,
+      backgroundColor: colors.border.subtle,
+      marginVertical: spacing.sm,
+    },
+    yearDividerDashed: {
+      height: 0,
+      borderTopWidth: 0.5,
+      borderTopColor: colors.border.subtle,
+      borderStyle: 'dashed',
+      backgroundColor: 'transparent',
+    },
+    yearEmptyText: {
+      ...typography.bodySmall,
+      fontStyle: 'italic',
+      color: colors.text.placeholder,
+    },
+    yearEntryTitle: {
+      ...typography.h3,
+      color: colors.gold.bronze,
+      marginBottom: spacing.xs,
+    },
+    yearEntryContent: {
+      ...typography.body,
+    },
+    entryDivider: {
+      height: 0.5,
+      backgroundColor: colors.border.subtle,
+      marginVertical: spacing.sm,
+    },
+  });
+}

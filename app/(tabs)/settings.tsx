@@ -1,8 +1,7 @@
 import Constants from 'expo-constants';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ImageBackground,
-  Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -22,16 +21,12 @@ import {
   type FontSizePref,
   type ThemePref,
 } from '../../lib/preferences';
-import { colors, radius, spacing, styles as themeStyles, typography } from '../../styles/theme';
+import { getCardOverlayColor, getCardSource, useTheme, type Theme } from '../../styles/theme';
 
-const cardSource = Platform.OS === 'web'
-  ? require('../../assets/cards/card-w4-papyrus@web.png')
-  : require('../../assets/cards/card-w4-papyrus.png');
-
-const THEME_OPTIONS: { value: ThemePref; label: string; active: boolean }[] = [
-  { value: 'dark', label: 'Dark', active: true },
-  { value: 'light', label: 'Light', active: false },
-  { value: 'system', label: 'System', active: false },
+const THEME_OPTIONS: { value: ThemePref; label: string }[] = [
+  { value: 'dark', label: 'Dark' },
+  { value: 'light', label: 'Light' },
+  { value: 'system', label: 'System' },
 ];
 
 const FONT_OPTIONS: { value: FontSizePref; label: string }[] = [
@@ -48,6 +43,9 @@ const DAY_VIEW_OPTIONS: { value: DefaultDayView; label: string }[] = [
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 
 export default function SettingsScreen() {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const cardSource = getCardSource('papyrus', theme.mode);
   const { preferences, setPreference } = usePreferences();
   const [langHint, setLangHint] = useState(false);
 
@@ -56,11 +54,11 @@ export default function SettingsScreen() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* APPEARANCE */}
         <AppText style={styles.sectionHeader}>APPEARANCE</AppText>
-        <View style={[themeStyles.card, styles.card]}>
+        <View style={[theme.styles.card, styles.card]}>
           {/* Theme */}
           <View style={styles.rowStack}>
             <View style={styles.rowHeader}>
-              <MoonIcon size={20} color={colors.gold.bronze} />
+              <MoonIcon size={20} color={theme.colors.gold.bronze} />
               <AppText style={styles.rowTitle}>Theme</AppText>
             </View>
             <View style={styles.pillRow}>
@@ -69,28 +67,17 @@ export default function SettingsScreen() {
                 return (
                   <TouchableOpacity
                     key={opt.value}
-                    style={[
-                      styles.pill,
-                      isSelected && opt.active && styles.pillActive,
-                      !opt.active && styles.pillMuted,
-                    ]}
+                    style={[styles.pill, isSelected && styles.pillActive]}
                     onPress={() => setPreference('theme', opt.value)}
                     activeOpacity={0.7}
                   >
-                    <AppText
-                      style={[
-                        styles.pillText,
-                        isSelected && opt.active && styles.pillTextActive,
-                        !opt.active && styles.pillTextMuted,
-                      ]}
-                    >
+                    <AppText style={[styles.pillText, isSelected && styles.pillTextActive]}>
                       {opt.label}
                     </AppText>
                   </TouchableOpacity>
                 );
               })}
             </View>
-            <AppText style={styles.rowFootnote}>Light and System coming soon.</AppText>
           </View>
 
           <View style={styles.divider} />
@@ -98,7 +85,7 @@ export default function SettingsScreen() {
           {/* Font size */}
           <View style={styles.rowStack}>
             <View style={styles.rowHeader}>
-              <FontIcon size={20} color={colors.gold.bronze} />
+              <FontIcon size={20} color={theme.colors.gold.bronze} />
               <AppText style={styles.rowTitle}>Font size</AppText>
             </View>
             <View style={styles.pillRow}>
@@ -129,12 +116,12 @@ export default function SettingsScreen() {
             activeOpacity={0.7}
           >
             <View style={styles.rowHeader}>
-              <LanguageIcon size={20} color={colors.gold.bronze} />
+              <LanguageIcon size={20} color={theme.colors.gold.bronze} />
               <AppText style={styles.rowTitle}>Language</AppText>
             </View>
             <View style={styles.navRowRight}>
               <AppText style={styles.navRowValue}>English</AppText>
-              <ChevronRightIcon size={16} color={colors.text.placeholder} />
+              <ChevronRightIcon size={16} color={theme.colors.text.placeholder} />
             </View>
           </TouchableOpacity>
           {langHint && (
@@ -144,10 +131,10 @@ export default function SettingsScreen() {
 
         {/* JOURNALING */}
         <AppText style={styles.sectionHeader}>JOURNALING</AppText>
-        <View style={[themeStyles.card, styles.card]}>
+        <View style={[theme.styles.card, styles.card]}>
           <View style={styles.rowStack}>
             <View style={styles.rowHeader}>
-              <HistoryIcon size={20} color={colors.gold.bronze} />
+              <HistoryIcon size={20} color={theme.colors.gold.bronze} />
               <AppText style={styles.rowTitle}>Default day view</AppText>
             </View>
             <View style={styles.pillRow}>
@@ -180,113 +167,110 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  scroll: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xxxl,
-    gap: spacing.md,
-  },
-  sectionHeader: {
-    ...typography.overline,
-    color: colors.gold.bronze,
-    marginTop: spacing.md,
-    marginBottom: spacing.xs,
-    marginLeft: spacing.xs,
-  },
-  card: {
-    backgroundColor: 'rgba(19, 16, 9, 0.75)',
-    gap: spacing.md,
-  },
-  rowStack: {
-    gap: spacing.sm,
-  },
-  rowHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  rowTitle: {
-    ...typography.body,
-    fontWeight: '500',
-  },
-  rowFootnote: {
-    ...typography.caption,
-    color: colors.text.placeholder,
-    fontStyle: 'italic',
-  },
-  divider: {
-    height: 0.5,
-    backgroundColor: colors.border.subtle,
-  },
-  pillRow: {
-    flexDirection: 'row',
-    borderWidth: 0.5,
-    borderColor: colors.border.default,
-    borderRadius: radius.full,
-    padding: 3,
-    gap: 3,
-  },
-  pill: {
-    flex: 1,
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-    borderRadius: radius.full,
-  },
-  pillActive: {
-    backgroundColor: 'rgba(201, 169, 110, 0.15)',
-    borderWidth: 0.5,
-    borderColor: colors.border.gold,
-  },
-  pillMuted: {
-    opacity: 0.55,
-  },
-  pillText: {
-    ...typography.label,
-    color: colors.text.secondary,
-  },
-  pillTextActive: {
-    color: colors.gold.bronze,
-    fontWeight: '600',
-  },
-  pillTextMuted: {
-    color: colors.text.placeholder,
-  },
-  navRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.xs,
-  },
-  navRowRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  navRowValue: {
-    ...typography.body,
-    color: colors.text.placeholder,
-  },
-  versionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    marginTop: spacing.md,
-    borderTopWidth: 0.5,
-    borderTopColor: colors.border.subtle,
-  },
-  versionLabel: {
-    ...typography.bodySmall,
-    color: colors.text.placeholder,
-  },
-  versionValue: {
-    ...typography.bodySmall,
-    color: colors.text.secondary,
-  },
-});
+function makeStyles({ mode, colors, spacing, radius, typography }: Theme) {
+  const pillActiveTint = mode === 'light' ? 'rgba(138, 106, 53, 0.12)' : 'rgba(201, 169, 110, 0.15)';
+  return StyleSheet.create({
+    background: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+    },
+    scroll: {
+      padding: spacing.lg,
+      paddingBottom: spacing.xxxl,
+      gap: spacing.md,
+    },
+    sectionHeader: {
+      ...typography.overline,
+      color: colors.gold.bronze,
+      marginTop: spacing.md,
+      marginBottom: spacing.xs,
+      marginLeft: spacing.xs,
+    },
+    card: {
+      backgroundColor: getCardOverlayColor(mode),
+      gap: spacing.md,
+    },
+    rowStack: {
+      gap: spacing.sm,
+    },
+    rowHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    rowTitle: {
+      ...typography.body,
+      fontWeight: '500',
+    },
+    rowFootnote: {
+      ...typography.caption,
+      color: colors.text.placeholder,
+      fontStyle: 'italic',
+    },
+    divider: {
+      height: 0.5,
+      backgroundColor: colors.border.subtle,
+    },
+    pillRow: {
+      flexDirection: 'row',
+      borderWidth: 0.5,
+      borderColor: colors.border.default,
+      borderRadius: radius.full,
+      padding: 3,
+      gap: 3,
+    },
+    pill: {
+      flex: 1,
+      paddingVertical: spacing.sm,
+      alignItems: 'center',
+      borderRadius: radius.full,
+    },
+    pillActive: {
+      backgroundColor: pillActiveTint,
+      borderWidth: 0.5,
+      borderColor: colors.border.gold,
+    },
+    pillText: {
+      ...typography.label,
+      color: colors.text.secondary,
+    },
+    pillTextActive: {
+      color: colors.gold.bronze,
+      fontWeight: '600',
+    },
+    navRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: spacing.xs,
+    },
+    navRowRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    navRowValue: {
+      ...typography.body,
+      color: colors.text.placeholder,
+    },
+    versionRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.md,
+      marginTop: spacing.md,
+      borderTopWidth: 0.5,
+      borderTopColor: colors.border.subtle,
+    },
+    versionLabel: {
+      ...typography.bodySmall,
+      color: colors.text.placeholder,
+    },
+    versionValue: {
+      ...typography.bodySmall,
+      color: colors.text.secondary,
+    },
+  });
+}
