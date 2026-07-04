@@ -27,42 +27,20 @@ export default function SignUpScreen() {
     const { data, error: signUpError } = await supabase.auth.signUp({
       email: email.trim(),
       password,
+      options: {
+        data: {
+          consent_given_at: new Date().toISOString(),
+          privacy_policy_version: PRIVACY_POLICY_VERSION,
+        },
+      },
     });
 
+    setLoading(false);
+
     if (signUpError) {
-      setLoading(false);
       setError(signUpError.message);
       return;
     }
-
-    if (data.session && data.user) {
-      await supabase.auth.setSession({
-        access_token: data.session.access_token,
-        refresh_token: data.session.refresh_token,
-      });
-
-      const { error: profileError, data: profileRows } = await supabase
-        .from('user_profiles')
-        .update({
-          consent_given_at: new Date().toISOString(),
-          privacy_policy_version: PRIVACY_POLICY_VERSION,
-        })
-        .eq('id', data.user.id)
-        .select();
-
-      if (profileError) {
-        setLoading(false);
-        setError(`Consent not recorded: ${profileError.message}`);
-        return;
-      }
-      if (!profileRows || profileRows.length === 0) {
-        setLoading(false);
-        setError('Consent not recorded — please contact support.');
-        return;
-      }
-    }
-
-    setLoading(false);
 
     if (data.session) {
       router.replace('/(tabs)');
