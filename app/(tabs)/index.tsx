@@ -4,12 +4,12 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { DeleteIcon, NewEntryIcon } from '../../assets/icons';
+import { AppText as Text } from '../../components/AppText';
 import { createEntry } from '../../lib/entries';
 import { colors, spacing, styles as themeStyles, typography } from '../../styles/theme';
 

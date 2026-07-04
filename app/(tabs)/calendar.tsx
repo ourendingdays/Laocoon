@@ -1,5 +1,5 @@
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ImageBackground,
   Modal,
@@ -7,11 +7,12 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { AppText as Text } from '../../components/AppText';
 import { listEntries, type Entry } from '../../lib/entries';
+import { usePreferences } from '../../lib/preferences';
 import { colors, radius, spacing, styles as themeStyles, typography } from '../../styles/theme';
 
 const cardSource = Platform.OS === 'web'
@@ -65,11 +66,16 @@ const MONTH_NAMES = [
 ];
 
 export default function CalendarScreen() {
+  const { preferences } = usePreferences();
   const now = new Date();
   const currentYear = now.getFullYear();
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth());
-  const [viewMode, setViewMode] = useState<'calendar' | 'onthisday'>('onthisday');
+  const [viewMode, setViewMode] = useState<'calendar' | 'onthisday'>(preferences.defaultDayView);
+
+  useEffect(() => {
+    setViewMode(preferences.defaultDayView);
+  }, [preferences.defaultDayView]);
   const [focusMonth, setFocusMonth] = useState(now.getMonth());
   const [focusDay, setFocusDay] = useState(now.getDate());
   const [selectedEntry, setSelectedEntry] = useState<{ dateStr: string; text: string } | null>(null);
@@ -264,7 +270,9 @@ export default function CalendarScreen() {
                         {day}
                       </Text>
                       {hasEntry && (
-                        <Text style={styles.entryCount}>Notes : {dayEntries.length}</Text>
+                        <View style={styles.entryCountBadge}>
+                          <Text style={styles.entryCountText}>{dayEntries.length}</Text>
+                        </View>
                       )}
                     </TouchableOpacity>
                   );
@@ -468,14 +476,23 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
     fontWeight: '600',
   },
-  entryCount: {
+  entryCountBadge: {
     position: 'absolute',
-    top: 2,
-    right: 4,
-    ...typography.caption,
-    color: colors.gold.bronze,
-    fontSize: 15,
-    fontWeight: '600',
+    top: 3,
+    right: 3,
+    minWidth: 16,
+    height: 16,
+    paddingHorizontal: 4,
+    borderRadius: radius.full,
+    backgroundColor: colors.gold.bronze,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  entryCountText: {
+    color: colors.background.app,
+    fontSize: 10,
+    lineHeight: 12,
+    fontWeight: '700',
   },
   entryCard: {
     backgroundColor: 'rgba(28, 23, 16, 0.9)',

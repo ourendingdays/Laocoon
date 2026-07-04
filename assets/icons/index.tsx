@@ -257,3 +257,49 @@ export const FocusIcon = ({ size = 24, color = '#c9a96e' }: IconProps) => (
     <Circle cx={16} cy={16} r={2} fill={color} />
   </Svg>
 );
+
+// ─────────────────────────────────────────────
+// SETTINGS
+// ─────────────────────────────────────────────
+
+export const MoonIcon = ({ size = 24, color = '#c9a96e' }: IconProps) => (
+  <Svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+    <Path
+      d="M23 20 A10 10 0 1 1 12 9 A8 8 0 0 0 23 20 Z"
+      stroke={color}
+      strokeWidth={1.5}
+      fill="none"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const FontIcon = ({ size = 24, color = '#c9a96e' }: IconProps) => (
+  <Svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+    <Line x1={6} y1={10} x2={16} y2={10} stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+    <Line x1={11} y1={10} x2={11} y2={24} stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+    <Line x1={18} y1={16} x2={26} y2={16} stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+    <Line x1={22} y1={16} x2={22} y2={24} stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+  </Svg>
+);
+
+export const LanguageIcon = ({ size = 24, color = '#c9a96e' }: IconProps) => (
+  <Svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+    <Circle cx={16} cy={16} r={10} stroke={color} strokeWidth={1.5} />
+    <Ellipse cx={16} cy={16} rx={5} ry={10} stroke={color} strokeWidth={1.5} />
+    <Line x1={6} y1={16} x2={26} y2={16} stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+  </Svg>
+);
+
+export const ChevronRightIcon = ({ size = 24, color = '#c9a96e' }: IconProps) => (
+  <Svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+    <Path
+      d="M13 8 L21 16 L13 24"
+      stroke={color}
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+  </Svg>
+);

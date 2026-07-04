@@ -1,6 +1,7 @@
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { AppText as Text } from '../../components/AppText';
 import { supabase } from '../../lib/supabase';
 import { PRIVACY_POLICY_VERSION } from '../../lib/legal';
 import { colors, spacing, styles as themeStyles, typography } from '../../styles/theme';

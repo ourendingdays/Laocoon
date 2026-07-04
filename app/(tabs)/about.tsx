@@ -1,4 +1,5 @@
-import { ImageBackground, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { AppText as Text } from '../../components/AppText';
 import { colors, spacing, styles as themeStyles, typography } from '../../styles/theme';
 
 const cardSource = Platform.OS === 'web'

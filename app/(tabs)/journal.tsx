@@ -8,12 +8,12 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { DeleteIcon, EditIcon } from '../../assets/icons';
+import { AppText as Text } from '../../components/AppText';
 import { deleteEntry, listEntries, updateEntry, type Entry } from '../../lib/entries';
 import { colors, radius, spacing, styles as themeStyles, typography } from '../../styles/theme';
 

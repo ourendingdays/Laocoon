@@ -1,6 +1,7 @@
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { PreferencesProvider } from '../lib/preferences';
 import { SessionProvider, useSession } from '../lib/session';
 import { colors, styles as themeStyles } from '../styles/theme';
 
@@ -32,13 +33,15 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
 export default function RootLayout() {
   return (
-    <SessionProvider>
-      <AuthGate>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="(auth)" />
-        </Stack>
-      </AuthGate>
-    </SessionProvider>
+    <PreferencesProvider>
+      <SessionProvider>
+        <AuthGate>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="(auth)" />
+          </Stack>
+        </AuthGate>
+      </SessionProvider>
+    </PreferencesProvider>
   );
 }

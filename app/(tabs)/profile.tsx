@@ -4,10 +4,10 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { AppText as Text } from '../../components/AppText';
 import { listEntries } from '../../lib/entries';
 import { useSession } from '../../lib/session';
 import { supabase } from '../../lib/supabase';
