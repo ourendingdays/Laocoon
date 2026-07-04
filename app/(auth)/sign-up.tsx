@@ -92,7 +92,7 @@ export default function SignUpScreen() {
           </View>
           <Text style={styles.consentText}>
             I agree to the{' '}
-            <Link href="/about" style={styles.link}>
+            <Link href="/privacy" style={styles.link}>
               Privacy Policy
             </Link>{' '}
             and consent to storing my diary entries.

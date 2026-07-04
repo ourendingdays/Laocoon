@@ -1,36 +1,46 @@
-import { Link, useRouter } from 'expo-router';
+import { Link } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { AppText as Text } from '../../components/AppText';
 import { supabase } from '../../lib/supabase';
 import { useTheme, type Theme } from '../../styles/theme';
 
-export default function SignInScreen() {
+function getRedirectTo(): string | undefined {
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    return `${window.location.origin}/update-password`;
+  }
+  return undefined;
+}
+
+export default function ResetPasswordScreen() {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const router = useRouter();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
 
-  async function handleSignIn() {
+  async function handleReset() {
     setError(null);
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { error: err } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: getRedirectTo(),
+    });
     setLoading(false);
-    if (error) {
-      setError(error.message);
+    if (err) {
+      setError(err.message);
       return;
     }
-    router.replace('/(tabs)');
+    setSent(true);
   }
 
   return (
     <View style={styles.screen}>
       <View style={styles.card}>
-        <Text style={styles.title}>Welcome back</Text>
-        <Text style={styles.subtitle}>Sign in to open the scroll.</Text>
+        <Text style={styles.title}>Reset your password</Text>
+        <Text style={styles.subtitle}>
+          Enter your email and we'll send you a link to set a new one.
+        </Text>
 
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -44,39 +54,28 @@ export default function SignInScreen() {
           placeholderTextColor={theme.colors.text.placeholder}
         />
 
-        <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={theme.styles.input}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          autoCapitalize="none"
-          autoComplete="current-password"
-          placeholder="••••••••"
-          placeholderTextColor={theme.colors.text.placeholder}
-        />
-
-        <View style={styles.forgotRow}>
-          <Link href="/(auth)/reset" style={styles.link}>
-            Forgot password?
-          </Link>
-        </View>
-
         {error && <Text style={styles.error}>{error}</Text>}
+        {sent && (
+          <Text style={styles.notice}>
+            Check your inbox. The link will take you back here to choose a new password.
+          </Text>
+        )}
 
         <TouchableOpacity
-          style={[theme.styles.buttonPrimary, loading && styles.buttonDisabled]}
-          onPress={handleSignIn}
-          disabled={loading}
+          style={[theme.styles.buttonPrimary, (loading || sent) && styles.buttonDisabled]}
+          onPress={handleReset}
+          disabled={loading || sent}
           activeOpacity={0.7}
         >
-          <Text style={styles.primaryLabel}>{loading ? 'Signing in…' : 'Sign in'}</Text>
+          <Text style={styles.primaryLabel}>
+            {loading ? 'Sending…' : sent ? 'Sent' : 'Send reset link'}
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>No account yet?</Text>
-          <Link href="/(auth)/sign-up" style={styles.link}>
-            Create one
+          <Text style={styles.footerText}>Remembered it?</Text>
+          <Link href="/(auth)/sign-in" style={styles.link}>
+            Sign in
           </Link>
         </View>
       </View>
@@ -112,16 +111,17 @@ function makeStyles({ colors, spacing, typography, styles: themeStyles }: Theme)
       color: colors.semantic.error,
       marginTop: spacing.xs,
     },
+    notice: {
+      ...typography.bodySmall,
+      color: colors.semantic.success,
+      marginTop: spacing.xs,
+    },
     primaryLabel: {
       ...typography.label,
       color: colors.text.inverse,
     },
     buttonDisabled: {
       opacity: 0.5,
-    },
-    forgotRow: {
-      alignItems: 'flex-end',
-      marginTop: spacing.xs,
     },
     footer: {
       flexDirection: 'row',

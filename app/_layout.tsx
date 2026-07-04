@@ -14,7 +14,10 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (loading) return;
     const inAuthGroup = segments[0] === '(auth)';
-    if (!session && !inAuthGroup) {
+    const isPublicRoute =
+      segments[0] === 'privacy' || segments[0] === 'update-password';
+    const isPublic = inAuthGroup || isPublicRoute;
+    if (!session && !isPublic) {
       router.replace('/(auth)/sign-in');
     } else if (session && inAuthGroup) {
       router.replace('/(tabs)');
@@ -38,6 +41,7 @@ function RootStack() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="(auth)" />
+      <Stack.Screen name="update-password" />
       <Stack.Screen
         name="settings"
         options={{
@@ -53,6 +57,16 @@ function RootStack() {
         options={{
           headerShown: true,
           title: 'About',
+          headerStyle: { backgroundColor: theme.colors.background.pitch },
+          headerTintColor: theme.colors.text.primary,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="privacy"
+        options={{
+          headerShown: true,
+          title: 'Privacy',
           headerStyle: { backgroundColor: theme.colors.background.pitch },
           headerTintColor: theme.colors.text.primary,
           headerShadowVisible: false,

@@ -303,3 +303,23 @@ export const ChevronRightIcon = ({ size = 24, color = '#c9a96e' }: IconProps) =>
     />
   </Svg>
 );
+
+export const ShieldIcon = ({ size = 24, color = '#c9a96e' }: IconProps) => (
+  <Svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+    <Path
+      d="M16 4 L26 8 L26 16 Q26 24 16 28 Q6 24 6 16 L6 8 Z"
+      stroke={color}
+      strokeWidth={1.5}
+      strokeLinejoin="round"
+      fill="none"
+    />
+    <Path
+      d="M12 16 L15 19 L20 13"
+      stroke={color}
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+  </Svg>
+);

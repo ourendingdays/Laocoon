@@ -318,6 +318,12 @@ export default function CalendarScreen() {
                       yearEntries.map((entry, i) => (
                         <View key={entry.entry_id}>
                           {i > 0 && <View style={styles.entryDivider} />}
+                          <Text style={styles.yearEntryTime}>
+                            {new Date(entry.created_at).toLocaleTimeString(undefined, {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </Text>
                           {entry.title && (
                             <Text style={styles.yearEntryTitle}>{entry.title}</Text>
                           )}
@@ -644,6 +650,11 @@ function makeStyles({ mode, colors, spacing, radius, typography }: Theme) {
       ...typography.bodySmall,
       fontStyle: 'italic',
       color: colors.text.placeholder,
+    },
+    yearEntryTime: {
+      ...typography.caption,
+      color: colors.text.placeholder,
+      marginBottom: spacing.xs,
     },
     yearEntryTitle: {
       ...typography.h3,

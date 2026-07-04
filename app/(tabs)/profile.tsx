@@ -14,6 +14,7 @@ import {
   DeleteIcon,
   ExportIcon,
   SettingsIcon,
+  ShieldIcon,
 } from '../../assets/icons';
 import { AppText as Text } from '../../components/AppText';
 import { listEntries, type Entry } from '../../lib/entries';
@@ -139,15 +140,15 @@ export default function ProfileScreen() {
         : true;
     if (!ok) return;
 
+    if (!user) return;
+
     setBusy('delete');
     setMessage(null);
     try {
-      if (user) {
-        await supabase
-          .from('user_profiles')
-          .upsert({ id: user.id, deletion_requested_at: new Date().toISOString() });
-      }
-      await supabase.from('entries').delete().neq('entry_id', '00000000-0000-0000-0000-000000000000');
+      await supabase
+        .from('user_profiles')
+        .upsert({ id: user.id, deletion_requested_at: new Date().toISOString() });
+      await supabase.from('entries').delete().eq('user_id', user.id);
       await supabase.auth.signOut();
       setMessage({
         kind: 'info',
@@ -232,6 +233,20 @@ export default function ProfileScreen() {
         {/* YOUR DATA */}
         <Text style={styles.sectionHeader}>YOUR DATA</Text>
         <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.navRow}
+            onPress={() => router.push('/privacy')}
+            activeOpacity={0.7}
+          >
+            <View style={styles.navRowLeft}>
+              <ShieldIcon size={20} color={theme.colors.gold.bronze} />
+              <Text style={styles.navRowLabel}>Privacy Policy</Text>
+            </View>
+            <ChevronRightIcon size={16} color={theme.colors.text.placeholder} />
+          </TouchableOpacity>
+
+          <View style={styles.divider} />
+
           <TouchableOpacity
             style={styles.navRow}
             onPress={handleExport}

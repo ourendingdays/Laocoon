@@ -2,7 +2,7 @@
 
 > *Your mind is an oracle. Not the kind that speaks in riddles—the kind that speaks only when you listen.*
 
-A personal journaling app built for long-term self-reflection. Write daily, look back across any point in time, and watch the shape of your own thinking emerge.
+A personal journaling app built for long-term self-reflection. Write daily, look back across any point in time, and watch the shape of your own thinking emerge. Track the days across years.
 
 ---
 
