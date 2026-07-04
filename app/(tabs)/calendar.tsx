@@ -59,10 +59,19 @@ function buildCalendarDays(year: number, month: number): DayCell[] {
   return cells;
 }
 
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
 export default function CalendarScreen() {
   const now = new Date();
+  const currentYear = now.getFullYear();
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth());
+  const [viewMode, setViewMode] = useState<'calendar' | 'onthisday'>('onthisday');
+  const [focusMonth, setFocusMonth] = useState(now.getMonth());
+  const [focusDay, setFocusDay] = useState(now.getDate());
   const [selectedEntry, setSelectedEntry] = useState<{ dateStr: string; text: string } | null>(null);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [pickerYear, setPickerYear] = useState(now.getFullYear());
@@ -85,6 +94,30 @@ export default function CalendarScreen() {
     return map;
   }, [entries]);
 
+  const yearsToShow = useMemo(() => {
+    const LAUNCH_YEAR = 2026;
+    const floor = Math.max(LAUNCH_YEAR, Math.min(currentYear, LAUNCH_YEAR));
+    const years: number[] = [];
+    for (let y = currentYear; y >= floor; y--) years.push(y);
+    return years;
+  }, [currentYear]);
+
+  const entriesByYearForFocus = useMemo(() => {
+    const map: Record<number, Entry[]> = {};
+    for (const e of entries) {
+      const d = new Date(e.created_at);
+      if (d.getMonth() === focusMonth && d.getDate() === focusDay) {
+        (map[d.getFullYear()] ||= []).push(e);
+      }
+    }
+    for (const y of Object.keys(map)) {
+      map[Number(y)].sort(
+        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+      );
+    }
+    return map;
+  }, [entries, focusMonth, focusDay]);
+
   function previousMonth() {
     if (month === 0) { setYear(y => y - 1); setMonth(11); }
     else setMonth(m => m - 1);
@@ -95,6 +128,23 @@ export default function CalendarScreen() {
     if (month === 11) { setYear(y => y + 1); setMonth(0); }
     else setMonth(m => m + 1);
     setSelectedEntry(null);
+  }
+
+  function shiftFocusDay(delta: number) {
+    const base = new Date(currentYear, focusMonth, focusDay);
+    base.setDate(base.getDate() + delta);
+    setFocusMonth(base.getMonth());
+    setFocusDay(base.getDate());
+  }
+
+  function handlePrev() {
+    if (viewMode === 'calendar') previousMonth();
+    else shiftFocusDay(-1);
+  }
+
+  function handleNext() {
+    if (viewMode === 'calendar') nextMonth();
+    else shiftFocusDay(1);
   }
 
   function openPicker() {
@@ -114,6 +164,9 @@ export default function CalendarScreen() {
     year: 'numeric',
   });
 
+  const focusLabel = `${MONTH_NAMES[focusMonth]} ${focusDay}`;
+  const headerLabel = viewMode === 'calendar' ? monthLabel : focusLabel;
+
   const days = buildCalendarDays(year, month);
 
   return (
@@ -123,80 +176,152 @@ export default function CalendarScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.container}>
-          {/* Month navigation */}
+          {/* Header navigation */}
           <View style={styles.header}>
-            <TouchableOpacity style={styles.navButton} onPress={previousMonth} activeOpacity={0.7}>
+            <TouchableOpacity style={styles.navButton} onPress={handlePrev} activeOpacity={0.7}>
               <Text style={styles.navButtonText}>← Prev</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={openPicker} activeOpacity={0.7} style={styles.monthYearButton}>
-              <Text style={styles.monthYear}>{monthLabel}</Text>
-              <Text style={styles.monthYearCaret}>▾</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton} onPress={nextMonth} activeOpacity={0.7}>
+            {viewMode === 'calendar' ? (
+              <TouchableOpacity onPress={openPicker} activeOpacity={0.7} style={styles.monthYearButton}>
+                <Text style={styles.monthYear}>{headerLabel}</Text>
+                <Text style={styles.monthYearCaret}>▾</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.monthYearButton}>
+                <Text style={styles.monthYear}>{headerLabel}</Text>
+              </View>
+            )}
+            <TouchableOpacity style={styles.navButton} onPress={handleNext} activeOpacity={0.7}>
               <Text style={styles.navButtonText}>Next →</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Weekday headers */}
-          <View style={styles.weekdayRow}>
-            {WEEKDAYS.map(d => (
-              <View key={d} style={styles.weekdayCell}>
-                <Text style={styles.weekdayText}>{d}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Calendar grid */}
-          <View style={styles.grid}>
-            {days.map(({ day, dateStr, isOtherMonth }) => {
-              const dayEntries = entriesByDate[dateStr];
-              const hasEntry = !!dayEntries && dayEntries.length > 0;
-              return (
-                <TouchableOpacity
-                  key={dateStr}
-                  style={[
-                    styles.dayCell,
-                    isOtherMonth ? styles.dayCellOther : styles.dayCellCurrent,
-                    hasEntry && styles.dayCellEntry,
-                  ]}
-                  onPress={() => {
-                    if (!hasEntry) return;
-                    const preview = dayEntries
-                      .map((e) => e.content)
-                      .join('\n\n— — —\n\n');
-                    setSelectedEntry({ dateStr, text: preview });
-                  }}
-                  activeOpacity={hasEntry ? 0.7 : 1}
-                >
-                  <Text
-                    style={[
-                      styles.dayText,
-                      isOtherMonth && styles.dayTextOther,
-                      hasEntry && styles.dayTextEntry,
-                    ]}
-                  >
-                    {day}
-                  </Text>
-                  {hasEntry && (
-                    <Text style={styles.entryCount}>Notes : {dayEntries.length}</Text>
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          {/* Entry preview card */}
-          {selectedEntry && (
-            <View style={[themeStyles.card, styles.entryCard]}>
-              <Text style={styles.entryDate}>
-                {new Date(selectedEntry.dateStr + 'T00:00:00').toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+          {/* View toggle */}
+          <View style={styles.toggle}>
+            <TouchableOpacity
+              style={[styles.toggleButton, viewMode === 'onthisday' && styles.toggleButtonActive]}
+              onPress={() => setViewMode('onthisday')}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.toggleText, viewMode === 'onthisday' && styles.toggleTextActive]}>
+                On this day
               </Text>
-              <Text style={styles.entryText}>{selectedEntry.text}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.toggleButton, viewMode === 'calendar' && styles.toggleButtonActive]}
+              onPress={() => {
+                setViewMode('calendar');
+                setSelectedEntry(null);
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.toggleText, viewMode === 'calendar' && styles.toggleTextActive]}>
+                Calendar
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {viewMode === 'calendar' ? (
+            <>
+              {/* Weekday headers */}
+              <View style={styles.weekdayRow}>
+                {WEEKDAYS.map(d => (
+                  <View key={d} style={styles.weekdayCell}>
+                    <Text style={styles.weekdayText}>{d}</Text>
+                  </View>
+                ))}
+              </View>
+
+              {/* Calendar grid */}
+              <View style={styles.grid}>
+                {days.map(({ day, dateStr, isOtherMonth }) => {
+                  const dayEntries = entriesByDate[dateStr];
+                  const hasEntry = !!dayEntries && dayEntries.length > 0;
+                  return (
+                    <TouchableOpacity
+                      key={dateStr}
+                      style={[
+                        styles.dayCell,
+                        isOtherMonth ? styles.dayCellOther : styles.dayCellCurrent,
+                        hasEntry && styles.dayCellEntry,
+                      ]}
+                      onPress={() => {
+                        if (!hasEntry) return;
+                        const preview = dayEntries
+                          .map((e) => e.content)
+                          .join('\n\n— — —\n\n');
+                        setSelectedEntry({ dateStr, text: preview });
+                      }}
+                      activeOpacity={hasEntry ? 0.7 : 1}
+                    >
+                      <Text
+                        style={[
+                          styles.dayText,
+                          isOtherMonth && styles.dayTextOther,
+                          hasEntry && styles.dayTextEntry,
+                        ]}
+                      >
+                        {day}
+                      </Text>
+                      {hasEntry && (
+                        <Text style={styles.entryCount}>Notes : {dayEntries.length}</Text>
+                      )}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              {/* Entry preview card */}
+              {selectedEntry && (
+                <View style={[themeStyles.card, styles.entryCard]}>
+                  <Text style={styles.entryDate}>
+                    {new Date(selectedEntry.dateStr + 'T00:00:00').toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </Text>
+                  <Text style={styles.entryText}>{selectedEntry.text}</Text>
+                </View>
+              )}
+            </>
+          ) : (
+            <View style={styles.yearsList}>
+              {yearsToShow.map(y => {
+                const yearEntries = entriesByYearForFocus[y] || [];
+                const yearsAgo = currentYear - y;
+                const agoLabel =
+                  yearsAgo === 0 ? 'today' : yearsAgo === 1 ? '1 year ago' : `${yearsAgo} years ago`;
+                const isEmpty = yearEntries.length === 0;
+                return (
+                  <View
+                    key={y}
+                    style={[styles.yearCard, isEmpty && styles.yearCardEmpty]}
+                  >
+                    <View style={styles.yearHeader}>
+                      <Text style={styles.yearLabel}>{y}</Text>
+                      <Text style={styles.yearsAgoLabel}>{agoLabel}</Text>
+                    </View>
+                    <View style={[styles.yearDivider, isEmpty && styles.yearDividerDashed]} />
+                    {isEmpty ? (
+                      <Text style={styles.yearEmptyText}>
+                        {yearsAgo === 0 ? 'Nothing written yet today.' : `No entry for ${y}`}
+                      </Text>
+                    ) : (
+                      yearEntries.map((entry, i) => (
+                        <View key={entry.entry_id}>
+                          {i > 0 && <View style={styles.entryDivider} />}
+                          {entry.title && (
+                            <Text style={styles.yearEntryTitle}>{entry.title}</Text>
+                          )}
+                          <Text style={styles.yearEntryContent}>{entry.content}</Text>
+                        </View>
+                      ))
+                    )}
+                  </View>
+                );
+              })}
             </View>
           )}
         </View>
@@ -427,5 +552,93 @@ const styles = StyleSheet.create({
   },
   pickerMonthTextSelected: {
     color: colors.background.app,
+  },
+  // View toggle
+  toggle: {
+    flexDirection: 'row',
+    borderWidth: 0.5,
+    borderColor: colors.border.default,
+    borderRadius: radius.full,
+    padding: 3,
+    marginBottom: spacing.md,
+    gap: 3,
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    alignItems: 'center',
+    borderRadius: radius.full,
+  },
+  toggleButtonActive: {
+    backgroundColor: 'rgba(201, 169, 110, 0.15)',
+    borderWidth: 0.5,
+    borderColor: colors.border.gold,
+  },
+  toggleText: {
+    ...typography.label,
+    color: colors.text.secondary,
+  },
+  toggleTextActive: {
+    color: colors.gold.bronze,
+    fontWeight: '600',
+  },
+  // "On this day" year cards
+  yearsList: {
+    gap: spacing.md,
+  },
+  yearCard: {
+    backgroundColor: 'rgba(28, 23, 16, 0.9)',
+    borderRadius: radius.lg,
+    borderWidth: 0.5,
+    borderColor: colors.border.gold,
+    padding: spacing.md,
+  },
+  yearCardEmpty: {
+    backgroundColor: 'transparent',
+    borderStyle: 'dashed',
+    borderColor: colors.border.subtle,
+  },
+  yearHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+  },
+  yearLabel: {
+    ...typography.h2,
+    color: colors.gold.bronze,
+  },
+  yearsAgoLabel: {
+    ...typography.caption,
+    color: colors.text.placeholder,
+  },
+  yearDivider: {
+    height: 0.5,
+    backgroundColor: colors.border.subtle,
+    marginVertical: spacing.sm,
+  },
+  yearDividerDashed: {
+    height: 0,
+    borderTopWidth: 0.5,
+    borderTopColor: colors.border.subtle,
+    borderStyle: 'dashed',
+    backgroundColor: 'transparent',
+  },
+  yearEmptyText: {
+    ...typography.bodySmall,
+    fontStyle: 'italic',
+    color: colors.text.placeholder,
+  },
+  yearEntryTitle: {
+    ...typography.h3,
+    color: colors.gold.bronze,
+    marginBottom: spacing.xs,
+  },
+  yearEntryContent: {
+    ...typography.body,
+  },
+  entryDivider: {
+    height: 0.5,
+    backgroundColor: colors.border.subtle,
+    marginVertical: spacing.sm,
   },
 });
