@@ -76,7 +76,7 @@ export default function CalendarScreen() {
   }, [preferences.defaultDayView]);
   const [focusMonth, setFocusMonth] = useState(now.getMonth());
   const [focusDay, setFocusDay] = useState(now.getDate());
-  const [selectedEntry, setSelectedEntry] = useState<{ dateStr: string; text: string } | null>(null);
+  const [selectedDay, setSelectedDay] = useState<{ dateStr: string; entries: Entry[] } | null>(null);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [pickerYear, setPickerYear] = useState(now.getFullYear());
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -125,13 +125,13 @@ export default function CalendarScreen() {
   function previousMonth() {
     if (month === 0) { setYear(y => y - 1); setMonth(11); }
     else setMonth(m => m - 1);
-    setSelectedEntry(null);
+    setSelectedDay(null);
   }
 
   function nextMonth() {
     if (month === 11) { setYear(y => y + 1); setMonth(0); }
     else setMonth(m => m + 1);
-    setSelectedEntry(null);
+    setSelectedDay(null);
   }
 
   function shiftFocusDay(delta: number) {
@@ -159,7 +159,7 @@ export default function CalendarScreen() {
   function selectMonth(m: number) {
     setYear(pickerYear);
     setMonth(m);
-    setSelectedEntry(null);
+    setSelectedDay(null);
     setPickerVisible(false);
   }
 
@@ -186,7 +186,11 @@ export default function CalendarScreen() {
               <Text style={styles.navButtonText}>← Prev</Text>
             </TouchableOpacity>
             {viewMode === 'calendar' ? (
-              <TouchableOpacity onPress={openPicker} activeOpacity={0.7} style={styles.monthYearButton}>
+              <TouchableOpacity
+                onPress={openPicker}
+                activeOpacity={0.7}
+                style={[styles.monthYearButton, styles.monthYearButtonInteractive]}
+              >
                 <Text style={styles.monthYear}>{headerLabel}</Text>
                 <Text style={styles.monthYearCaret}>▾</Text>
               </TouchableOpacity>
@@ -215,7 +219,7 @@ export default function CalendarScreen() {
               style={[styles.toggleButton, viewMode === 'calendar' && styles.toggleButtonActive]}
               onPress={() => {
                 setViewMode('calendar');
-                setSelectedEntry(null);
+                setSelectedDay(null);
               }}
               activeOpacity={0.7}
             >
@@ -241,6 +245,7 @@ export default function CalendarScreen() {
                 {days.map(({ day, dateStr, isOtherMonth }) => {
                   const dayEntries = entriesByDate[dateStr];
                   const hasEntry = !!dayEntries && dayEntries.length > 0;
+                  const isSelected = selectedDay?.dateStr === dateStr;
                   return (
                     <TouchableOpacity
                       key={dateStr}
@@ -248,15 +253,15 @@ export default function CalendarScreen() {
                         styles.dayCell,
                         isOtherMonth ? styles.dayCellOther : styles.dayCellCurrent,
                         hasEntry && styles.dayCellEntry,
+                        isSelected && styles.dayCellSelected,
                       ]}
                       onPress={() => {
-                        if (!hasEntry) return;
-                        const preview = dayEntries
-                          .map((e) => e.content)
-                          .join('\n\n— — —\n\n');
-                        setSelectedEntry({ dateStr, text: preview });
+                        setSelectedDay({
+                          dateStr,
+                          entries: dayEntries ?? [],
+                        });
                       }}
-                      activeOpacity={hasEntry ? 0.7 : 1}
+                      activeOpacity={0.7}
                     >
                       <Text
                         style={[
@@ -277,20 +282,6 @@ export default function CalendarScreen() {
                 })}
               </View>
 
-              {/* Entry preview card */}
-              {selectedEntry && (
-                <View style={[theme.styles.card, styles.entryCard]}>
-                  <Text style={styles.entryDate}>
-                    {new Date(selectedEntry.dateStr + 'T00:00:00').toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </Text>
-                  <Text style={styles.entryText}>{selectedEntry.text}</Text>
-                </View>
-              )}
             </>
           ) : (
             <View style={styles.yearsList}>
@@ -338,6 +329,62 @@ export default function CalendarScreen() {
           )}
         </View>
       </ScrollView>
+      {/* Selected day preview modal */}
+      <Modal
+        visible={!!selectedDay}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedDay(null)}
+      >
+        <Pressable style={styles.modalBackdrop} onPress={() => setSelectedDay(null)}>
+          <Pressable style={styles.dayModalCard} onPress={() => {}}>
+            {selectedDay && (
+              <>
+                <Text style={styles.dayModalDate}>
+                  {new Date(selectedDay.dateStr + 'T00:00:00').toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </Text>
+                <ScrollView
+                  style={styles.dayModalScroll}
+                  showsVerticalScrollIndicator={false}
+                >
+                  {selectedDay.entries.length === 0 ? (
+                    <Text style={styles.yearEmptyText}>Nothing written on this day.</Text>
+                  ) : (
+                    selectedDay.entries.map((entry, i) => (
+                      <View key={entry.entry_id}>
+                        {i > 0 && <View style={styles.entryDivider} />}
+                        <Text style={styles.yearEntryTime}>
+                          {new Date(entry.created_at).toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </Text>
+                        {entry.title && (
+                          <Text style={styles.yearEntryTitle}>{entry.title}</Text>
+                        )}
+                        <Text style={styles.yearEntryContent}>{entry.content}</Text>
+                      </View>
+                    ))
+                  )}
+                </ScrollView>
+                <TouchableOpacity
+                  style={styles.dayModalClose}
+                  onPress={() => setSelectedDay(null)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.dayModalCloseText}>Close</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </Pressable>
+        </Pressable>
+      </Modal>
+
       {/* Month/Year picker modal */}
       <Modal
         visible={pickerVisible}
@@ -401,7 +448,6 @@ function makeStyles({ mode, colors, spacing, radius, typography }: Theme) {
     },
     scroll: {
       flexGrow: 1,
-      justifyContent: 'center',
       padding: spacing.lg,
     },
     container: {
@@ -470,6 +516,12 @@ function makeStyles({ mode, colors, spacing, radius, typography }: Theme) {
       borderRadius: radius.sm,
       opacity: 1,
     },
+    dayCellSelected: {
+      borderWidth: 1,
+      borderColor: colors.gold.bronze,
+      borderRadius: radius.sm,
+      opacity: 1,
+    },
     dayText: {
       ...typography.bodySmall,
       color: colors.text.secondary,
@@ -517,10 +569,20 @@ function makeStyles({ mode, colors, spacing, radius, typography }: Theme) {
       alignItems: 'center',
       justifyContent: 'center',
       gap: spacing.xs,
+      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.sm,
+    },
+    monthYearButtonInteractive: {
+      borderWidth: 0.5,
+      borderColor: colors.border.gold,
+      borderRadius: radius.md,
+      backgroundColor: activeTint,
     },
     monthYearCaret: {
-      ...typography.label,
-      color: colors.text.placeholder,
+      fontSize: 18,
+      lineHeight: 20,
+      color: colors.gold.bronze,
+      fontWeight: '600',
     },
     // Modal / picker
     modalBackdrop: {
@@ -538,6 +600,36 @@ function makeStyles({ mode, colors, spacing, radius, typography }: Theme) {
       padding: spacing.md,
       width: '100%',
       maxWidth: 320,
+    },
+    dayModalCard: {
+      backgroundColor: colors.background.charcoal,
+      borderRadius: radius.lg,
+      borderWidth: 0.5,
+      borderColor: colors.border.gold,
+      padding: spacing.md,
+      width: '100%',
+      maxWidth: 480,
+      maxHeight: '80%',
+      gap: spacing.sm,
+    },
+    dayModalDate: {
+      ...typography.h2,
+      color: colors.gold.bronze,
+      marginBottom: spacing.xs,
+    },
+    dayModalScroll: {
+      flexShrink: 1,
+    },
+    dayModalClose: {
+      marginTop: spacing.sm,
+      paddingVertical: spacing.sm,
+      borderTopWidth: 0.5,
+      borderTopColor: colors.border.subtle,
+      alignItems: 'center',
+    },
+    dayModalCloseText: {
+      ...typography.label,
+      color: colors.gold.bronze,
     },
     pickerYearRow: {
       flexDirection: 'row',
