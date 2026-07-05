@@ -17,7 +17,23 @@ A personal journaling app built for long-term self-reflection. Write daily, look
 ---
 ## 🎬 Preview
 
-> *Coming up!*
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/demo/welcome-page.png" height="280"><br>
+      <sub><b>Welcome</b></sub>
+    </td>
+    <td align="center">
+      <img src="docs/demo/writting-notes.gif" height="280"><br>
+      <sub><b>Writing an entry</b></sub>
+    </td>
+    <td align="center">
+      <img src="docs/demo/profile.gif" height="280"><br>
+      <sub><b>Profile</b></sub>
+    </td>
+  </tr>
+</table>
+
 ---
 
 
