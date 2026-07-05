@@ -118,7 +118,7 @@ export default function ProfileScreen() {
       } else {
         setMessage({
           kind: 'info',
-          text: `Native export not implemented yet. ${list.length} entries ready.`,
+          text: `Sign in on the web to download your ${list.length} entries.`,
         });
       }
     } catch (err) {

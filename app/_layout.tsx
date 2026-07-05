@@ -47,6 +47,7 @@ function RootStack() {
         options={{
           headerShown: true,
           title: 'Settings',
+          headerBackTitle: 'Back',
           headerStyle: { backgroundColor: theme.colors.background.pitch },
           headerTintColor: theme.colors.text.primary,
           headerShadowVisible: false,
@@ -57,6 +58,7 @@ function RootStack() {
         options={{
           headerShown: true,
           title: 'About',
+          headerBackTitle: 'Back',
           headerStyle: { backgroundColor: theme.colors.background.pitch },
           headerTintColor: theme.colors.text.primary,
           headerShadowVisible: false,
@@ -67,6 +69,7 @@ function RootStack() {
         options={{
           headerShown: true,
           title: 'Privacy',
+          headerBackTitle: 'Back',
           headerStyle: { backgroundColor: theme.colors.background.pitch },
           headerTintColor: theme.colors.text.primary,
           headerShadowVisible: false,
