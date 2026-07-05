@@ -15,11 +15,13 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     if (loading) return;
     const inAuthGroup = segments[0] === '(auth)';
     const isPublicRoute =
-      segments[0] === 'privacy' || segments[0] === 'update-password';
+      segments[0] === 'privacy' ||
+      segments[0] === 'update-password' ||
+      segments[0] === 'welcome';
     const isPublic = inAuthGroup || isPublicRoute;
     if (!session && !isPublic) {
-      router.replace('/(auth)/sign-in');
-    } else if (session && inAuthGroup) {
+      router.replace('/welcome');
+    } else if (session && (inAuthGroup || segments[0] === 'welcome')) {
       router.replace('/(tabs)');
     }
   }, [session, loading, segments, router]);
@@ -42,6 +44,7 @@ function RootStack() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="update-password" />
+      <Stack.Screen name="welcome" />
       <Stack.Screen
         name="settings"
         options={{
