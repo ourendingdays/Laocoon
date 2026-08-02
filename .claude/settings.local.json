@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -rf dist)",
+      "Bash(npm run *)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(whois -h whois.nic.google laocoon.app)"
+    ]
+  }
+}

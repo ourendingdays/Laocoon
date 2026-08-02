@@ -39,10 +39,7 @@ A personal journaling app built for long-term self-reflection. Write daily, look
 
 ## 🌐 Live Demo
 
-👉 https://laocoon-omega.vercel.app/
-
-> *Coming up!* https://laocoon.app
-
+👉 https://www.laocoon.app
 ---
 
 ## 💡 Concept

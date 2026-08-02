@@ -4,9 +4,7 @@
 
 Laocoon is live. A private, cross-platform journaling app for daily writing and long-term self-reflection — built in the open, deployed to the web, and named for the Trojan priest who saw clearly when no one else would listen.
 
-**Try it →** https://laocoon-omega.vercel.app.
-> comming soon: https://laocoon.app
-
+**Try it →** https://www.laocoon.app
 ---
 
 ## What's in v1.0.0
